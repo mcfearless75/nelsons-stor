@@ -9,3 +9,35 @@
   from = "/api/create-checkout"
   to = "/.netlify/functions/create-checkout"
   status = 200
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+
+# Long-lived cache for versioned assets
+[[headers]]
+  for = "/css/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/js/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+# Catalogue can be cached briefly — edit + redeploy to bust
+[[headers]]
+  for = "/data/products.json"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"

@@ -7,11 +7,12 @@
   <meta name="description" content="Hand-drawn golden retriever greeting cards made in Belfast. 39 designs across Christmas, Birthday, Valentine's, and more. Free UK postage on 4+ cards." />
   <meta property="og:title" content="Nelson's Stor — Golden Retriever Cards" />
   <meta property="og:description" content="Beautiful golden retriever cards for every occasion. Made in Belfast. Every order comes with a surprise free card from Nelson." />
-  <meta property="og:image" content="images/og/og-home.jpg" />
+  <meta property="og:image" content="banner.webp" />
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -36,29 +37,24 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-inner">
-      <div class="hero-text">
-        <span class="hero-eyebrow">Made in Belfast · 5.0★ · 130+ happy customers</span>
-        <h1 class="hero-title">
-          Hand-drawn golden retriever cards,<br>
-          <em>made with love in Belfast.</em>
-        </h1>
-        <p class="hero-sub">
-          Every order ships with a surprise free card from Nelson — because that's just who he is.
-        </p>
-        <a href="#shop" class="hero-cta">Shop All Cards →</a>
-      </div>
-      <div class="hero-img-wrap">
-        <img
-          src="images/nelson/hero.jpg"
-          alt="Nelson the golden retriever"
-          fetchpriority="high"
-          onerror="this.style.display='none';this.parentElement.querySelector('.hero-img-placeholder').style.display='flex'"
-        />
-        <div class="hero-img-placeholder" style="display:none">
-          <span>🐕</span>
-          <p>Nelson the Golden Retriever</p>
-          <small>Photo coming soon</small>
+    <div class="hero-banner-wrap">
+      <img
+        src="banner.webp"
+        alt="Nelson the golden retriever lounging on the beach with card artwork"
+        class="hero-banner-img"
+        fetchpriority="high"
+      />
+      <div class="hero-banner-overlay">
+        <div class="hero-text">
+          <span class="hero-eyebrow">Made in Belfast · 5.0★ · 130+ happy customers</span>
+          <h1 class="hero-title">
+            Hand-drawn golden retriever cards,<br>
+            <em>made with love in Belfast.</em>
+          </h1>
+          <p class="hero-sub">
+            Every order ships with a surprise free card from Nelson — because that's just who he is.
+          </p>
+          <a href="#shop" class="hero-cta">Shop All Cards →</a>
         </div>
       </div>
     </div>

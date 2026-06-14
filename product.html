@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -54,6 +55,8 @@
 
 <script src="js/cart.js"></script>
 <script>
+let _currentProduct = null;
+
 const CATEGORY_LABELS = {
   christmas: 'Christmas', birthday: 'Birthday', valentine: "Valentine's",
   'fathers-day': "Father's Day", 'mothers-day': "Mother's Day", baby: 'New Baby',
@@ -81,6 +84,7 @@ async function initProductPage() {
   const product = catalogue.find(p => p.id === id && p.active);
 
   if (!product) { window.location = 'index.html'; return; }
+  _currentProduct = product;
 
   document.title = `${product.title} — Nelson's Stor`;
   document.querySelector('meta[name="description"]').content = product.description;
@@ -190,15 +194,11 @@ document.addEventListener('click', (e) => {
   }
 });
 
-async function addToBasket() {
-  const resp = await fetch('data/products.json');
-  const catalogue = await resp.json();
-  const params = new URLSearchParams(window.location.search);
-  const product = catalogue.find(p => p.id === params.get('id'));
-  if (!product) return;
+function addToBasket() {
+  if (!_currentProduct) return;
 
   const qty = getQty();
-  addItem(product, qty);
+  addItem(_currentProduct, qty);
 
   const confirm = document.getElementById('add-confirm');
   confirm.classList.add('visible');
