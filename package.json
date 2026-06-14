@@ -1,0 +1,8 @@
+{
+  "name": "nelsons-stor",
+  "version": "1.0.0",
+  "description": "Nelson's Stor — golden retriever greeting cards, Belfast",
+  "dependencies": {
+    "stripe": "^16.0.0"
+  }
+}

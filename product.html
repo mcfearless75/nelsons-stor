@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Card — Nelson's Stor</title>
+  <meta name="description" content="Beautiful golden retriever greeting card, made in Belfast. Printed on 350gsm card with envelope." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="site-logo"><span>🐾</span> Nelson's Stor</a>
+    <nav class="header-nav">
+      <a href="about.html">About Nelson</a>
+      <a href="cart.html" class="cart-link">
+        🛒 Basket
+        <span class="cart-badge">0</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main class="page-wrap">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span>›</span>
+      <span id="bc-cat">Cards</span>
+      <span>›</span>
+      <span id="bc-title">Loading…</span>
+    </div>
+
+    <div id="product-detail-wrap">
+      <div class="loading-state">Loading card…</div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-links">
+      <a href="about.html">About Nelson</a>
+      <a href="https://www.etsy.com/uk/shop/NelsonsStor" target="_blank" rel="noopener">Find us on Etsy</a>
+      <a href="cart.html">Basket</a>
+    </div>
+    <p>© 2025 Nelson's Stor · Handmade in Belfast, Northern Ireland · Secure checkout by Stripe</p>
+  </div>
+</footer>
+
+<script src="js/cart.js"></script>
+<script>
+const CATEGORY_LABELS = {
+  christmas: 'Christmas', birthday: 'Birthday', valentine: "Valentine's",
+  'fathers-day': "Father's Day", 'mothers-day': "Mother's Day", baby: 'New Baby',
+  sympathy: 'Sympathy & Pet Loss', 'get-well': 'Get Well Soon',
+  'thinking-of-you': 'Thinking of You', 'st-patricks': "St Patrick's", general: 'General'
+};
+
+function placeholderSvg(title) {
+  const safe = title.replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+  const lines = safe.match(/.{1,22}/g) || [safe];
+  const textRows = lines.slice(0,3).map((l,i) =>
+    `<text x="50%" y="${50 + i * 18}" dominant-baseline="middle" text-anchor="middle" fill="#8B5E3C" font-size="13" font-family="Georgia,serif">${l}</text>`
+  ).join('');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500"><rect width="400" height="500" fill="#FFF8EE" rx="8"/><rect x="20" y="20" width="360" height="460" fill="none" stroke="#E8B84B" stroke-width="2" stroke-dasharray="6 4" rx="6"/><text x="50%" y="36%" dominant-baseline="middle" text-anchor="middle" fill="#C8973A" font-size="48">🐾</text>${textRows}</svg>`;
+  return 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+
+async function initProductPage() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (!id) { window.location = 'index.html'; return; }
+
+  const resp = await fetch('data/products.json');
+  const catalogue = await resp.json();
+  const product = catalogue.find(p => p.id === id && p.active);
+
+  if (!product) { window.location = 'index.html'; return; }
+
+  document.title = `${product.title} — Nelson's Stor`;
+  document.querySelector('meta[name="description"]').content = product.description;
+
+  const catLabel = CATEGORY_LABELS[product.category] || product.category;
+  document.getElementById('bc-cat').textContent = catLabel;
+  document.getElementById('bc-title').textContent = product.title;
+
+  const wrap = document.getElementById('product-detail-wrap');
+  wrap.innerHTML = `
+    <div class="product-page">
+      <div class="product-page-inner">
+        <div class="product-img-main">
+          <img
+            id="main-product-img"
+            src="${product.image}"
+            alt="${product.title}"
+            fetchpriority="high"
+          />
+        </div>
+        <div class="product-detail">
+          <p class="product-detail__cat">${catLabel}${product.is_bundle ? ' · Bundle' : ''}</p>
+          <h1 class="product-detail__title">${product.title}</h1>
+          <p class="product-detail__price">£${product.price_gbp.toFixed(2)}</p>
+          <p class="product-detail__desc">${product.description}</p>
+          <div class="product-specs">
+            <span class="spec-chip">Size: ${product.size}</span>
+            <span class="spec-chip">${product.gsm}gsm card</span>
+            <span class="spec-chip">Envelope included</span>
+            <span class="spec-chip">Blank inside</span>
+          </div>
+
+          <div id="postage-nudge" class="postage-nudge">
+            🎉 Add just <strong id="nudge-count">1</strong> more card to get <strong>free UK postage</strong>!
+          </div>
+
+          <div class="qty-row">
+            <span class="qty-label">Quantity</span>
+            <div class="qty-ctrl">
+              <button id="qty-minus" aria-label="Decrease quantity">−</button>
+              <input id="qty-input" type="number" value="1" min="1" max="20" readonly aria-label="Quantity" />
+              <button id="qty-plus" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="add-to-basket-btn" onclick="addToBasket()">
+            🛒 Add to Basket
+          </button>
+
+          <div id="add-confirm" class="add-confirm">
+            ✅ Added to basket! <a href="cart.html">View basket →</a>
+          </div>
+
+          <div class="free-card-promise">
+            🎁 <span><strong>Every order includes a surprise free card from Nelson.</strong> It's his way of saying thanks.</span>
+          </div>
+
+          <div class="free-card-promise" style="margin-top:0.5rem">
+            🚀 <span>Each card printed fresh and dispatched within <strong>2–3 working days</strong>.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const img = document.getElementById('main-product-img');
+  img.onerror = () => { img.src = placeholderSvg(product.title); };
+
+  updateNudge();
+}
+
+function getQty() {
+  return parseInt(document.getElementById('qty-input').value, 10) || 1;
+}
+
+function updateNudge() {
+  const currentCartCount = cartCount();
+  const qty = getQty();
+  const total = currentCartCount + qty;
+  const nudge = document.getElementById('postage-nudge');
+  if (!nudge) return;
+  if (currentCartCount >= 4 || total >= 4) {
+    nudge.classList.remove('visible');
+    return;
+  }
+  const need = 4 - total;
+  if (need <= 2) {
+    document.getElementById('nudge-count').textContent = need;
+    nudge.classList.add('visible');
+  } else {
+    nudge.classList.remove('visible');
+  }
+}
+
+document.addEventListener('click', (e) => {
+  if (e.target.id === 'qty-minus') {
+    const input = document.getElementById('qty-input');
+    const v = Math.max(1, parseInt(input.value, 10) - 1);
+    input.value = v;
+    updateNudge();
+  }
+  if (e.target.id === 'qty-plus') {
+    const input = document.getElementById('qty-input');
+    const v = Math.min(20, parseInt(input.value, 10) + 1);
+    input.value = v;
+    updateNudge();
+  }
+});
+
+async function addToBasket() {
+  const resp = await fetch('data/products.json');
+  const catalogue = await resp.json();
+  const params = new URLSearchParams(window.location.search);
+  const product = catalogue.find(p => p.id === params.get('id'));
+  if (!product) return;
+
+  const qty = getQty();
+  addItem(product, qty);
+
+  const confirm = document.getElementById('add-confirm');
+  confirm.classList.add('visible');
+  setTimeout(() => confirm.classList.remove('visible'), 4000);
+  updateNudge();
+}
+
+document.addEventListener('DOMContentLoaded', initProductPage);
+</script>
+</body>
+</html>
