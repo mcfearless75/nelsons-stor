@@ -7,7 +7,7 @@
 # omitted, so the real secret stays protected if it ever leaks into the build.
 [build.environment]
   SECRETS_SCAN_OMIT_KEYS = "SUPABASE_URL"
-  SECRETS_SCAN_OMIT_PATHS = "js/store.js"
+  SECRETS_SCAN_OMIT_PATHS = "js/store.js,js/admin-auth.js"
 
 [functions]
   node_bundler = "esbuild"
@@ -29,6 +29,13 @@
     Cross-Origin-Opener-Policy = "same-origin"
     Cross-Origin-Resource-Policy = "same-origin"
     Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://hysikygygqzbmgkajpwo.supabase.co; media-src 'self' https://hysikygygqzbmgkajpwo.supabase.co; connect-src 'self' https://hysikygygqzbmgkajpwo.supabase.co; frame-src https://checkout.stripe.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; upgrade-insecure-requests"
+
+# HTML is not fingerprinted — always revalidate so markup updates can't go stale
+# against freshly-revalidated CSS/JS (admin.html especially).
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # CSS/JS are not fingerprinted — always revalidate so updates show immediately
 [[headers]]

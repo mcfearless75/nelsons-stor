@@ -40,6 +40,7 @@ function fillSelect(selectEl, entries, selected) {
 }
 
 function openCardEditor(session, card, onSaved) {
+  closeModal("postage-editor");
   cardEditCtx = { session, card, onSaved };
   document.getElementById("ce-id").textContent = card.id;
   document.getElementById("ce-title").value = card.title || "";
@@ -151,6 +152,7 @@ function poundsPreview() {
 }
 
 async function openPostageEditor(session, onSaved) {
+  closeModal("card-editor");
   setEditorError("pe-error", "");
   openModal("postage-editor");
   document.getElementById("pe-body").hidden = true;
