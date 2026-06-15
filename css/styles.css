@@ -141,23 +141,24 @@ h3 { font-size: clamp(1rem, 2vw, 1.25rem); }
   height: 100%;
   max-height: 520px;
   object-fit: cover;
-  object-position: center 30%;
+  object-position: 20% 30%;
   display: block;
 }
 .hero-banner-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    to right,
-    rgba(42, 26, 14, 0.72) 0%,
+    to left,
+    rgba(42, 26, 14, 0.78) 0%,
     rgba(42, 26, 14, 0.55) 45%,
-    rgba(42, 26, 14, 0.0) 75%
+    rgba(42, 26, 14, 0.0) 72%
   );
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   padding: 0 clamp(1.5rem, 6vw, 4rem);
 }
-.hero-text { max-width: 520px; }
+.hero-text { max-width: 460px; text-align: left; }
 .hero-eyebrow {
   display: inline-block;
   background: var(--gold-light);
