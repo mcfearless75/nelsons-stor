@@ -86,6 +86,12 @@ async function initProductPage() {
   if (!product) { window.location = 'index.html'; return; }
   _currentProduct = product;
 
+  let mediaEntry = null;
+  try {
+    const mResp = await fetch('data/media.json');
+    if (mResp.ok) { const allMedia = await mResp.json(); mediaEntry = allMedia[id] || null; }
+  } catch (e) { /* gallery falls back to the single catalogue image */ }
+
   document.title = `${product.title} — Nelson's Stor`;
   document.querySelector('meta[name="description"]').content = product.description;
 
@@ -97,13 +103,11 @@ async function initProductPage() {
   wrap.innerHTML = `
     <div class="product-page">
       <div class="product-page-inner">
-        <div class="product-img-main">
-          <img
-            id="main-product-img"
-            src="${product.image}"
-            alt="${product.title}"
-            fetchpriority="high"
-          />
+        <div class="product-gallery">
+          <div class="gallery-main" id="gallery-main">
+            <img id="gallery-main-img" src="${product.image}" alt="${product.title}" fetchpriority="high" />
+          </div>
+          <div class="gallery-thumbs" id="gallery-thumbs"></div>
         </div>
         <div class="product-detail">
           <p class="product-detail__cat">${catLabel}${product.is_bundle ? ' · Bundle' : ''}</p>
@@ -150,10 +154,59 @@ async function initProductPage() {
     </div>
   `;
 
-  const img = document.getElementById('main-product-img');
-  img.onerror = () => { img.src = placeholderSvg(product.title); };
+  buildGallery(product, mediaEntry);
 
   updateNudge();
+}
+
+function buildGallery(product, mediaEntry) {
+  const images = (mediaEntry && mediaEntry.images && mediaEntry.images.length)
+    ? mediaEntry.images : [product.image];
+  const video = mediaEntry && mediaEntry.video ? mediaEntry.video : null;
+  const poster = images[0];
+
+  setMainImage(images[0], product.title);
+
+  const thumbs = document.getElementById('gallery-thumbs');
+  if (images.length <= 1 && !video) { thumbs.style.display = 'none'; return; }
+
+  let html = '';
+  images.forEach((src, i) => {
+    html += `<button class="gallery-thumb${i === 0 ? ' active' : ''}" data-type="image" data-src="${src}" aria-label="View image ${i + 1}">
+      <img src="${src}" alt="${product.title} view ${i + 1}" loading="lazy" onerror="this.style.opacity=0" />
+    </button>`;
+  });
+  if (video) {
+    html += `<button class="gallery-thumb gallery-thumb--video" data-type="video" data-src="${video}" data-poster="${poster}" aria-label="Play product video">
+      <img src="${poster}" alt="Play video" loading="lazy" />
+      <span class="gallery-play">▶</span>
+    </button>`;
+  }
+  thumbs.innerHTML = html;
+
+  thumbs.querySelectorAll('.gallery-thumb').forEach(btn => {
+    btn.addEventListener('click', () => {
+      thumbs.querySelectorAll('.gallery-thumb').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (btn.dataset.type === 'video') {
+        setMainVideo(btn.dataset.src, btn.dataset.poster);
+      } else {
+        setMainImage(btn.dataset.src, product.title);
+      }
+    });
+  });
+}
+
+function setMainImage(src, title) {
+  const main = document.getElementById('gallery-main');
+  main.innerHTML = `<img id="gallery-main-img" src="${src}" alt="${title}" />`;
+  const img = document.getElementById('gallery-main-img');
+  img.onerror = () => { img.src = placeholderSvg(title); };
+}
+
+function setMainVideo(src, poster) {
+  const main = document.getElementById('gallery-main');
+  main.innerHTML = `<video id="gallery-main-video" src="${src}" poster="${poster}" controls autoplay muted playsinline loop></video>`;
 }
 
 function getQty() {
