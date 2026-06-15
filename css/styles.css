@@ -3,18 +3,18 @@
   --cream: #FFF8EE;
   --cream-mid: #F5E8D2;
   --cream-dark: #EDD8B8;
-  --gold: #C8973A;
-  --gold-light: #E8B84B;
-  --brown: #5C3D1E;
-  --brown-light: #8B5E3C;
-  --text-dark: #2A1A0E;
-  --text-mid: #6B4226;
-  --text-light: #A07850;
+  --gold: #15719B;
+  --gold-light: #5FC0E6;
+  --brown: #16455F;
+  --brown-light: #2E7396;
+  --text-dark: #133140;
+  --text-mid: #3D5663;
+  --text-light: #5E7682;
   --white: #FFFFFF;
-  --green-ok: #3A7C5C;
-  --shadow-sm: 0 2px 8px rgba(92,61,30,0.08);
-  --shadow-md: 0 4px 20px rgba(92,61,30,0.14);
-  --shadow-lg: 0 8px 40px rgba(92,61,30,0.20);
+  --green-ok: #2E8B6F;
+  --shadow-sm: 0 2px 8px rgba(23,63,90,0.10);
+  --shadow-md: 0 4px 20px rgba(23,63,90,0.16);
+  --shadow-lg: 0 8px 40px rgba(23,63,90,0.22);
   --radius-sm: 8px;
   --radius-md: 16px;
   --radius-lg: 28px;
@@ -149,9 +149,9 @@ h3 { font-size: clamp(1rem, 2vw, 1.25rem); }
   inset: 0;
   background: linear-gradient(
     to left,
-    rgba(42, 26, 14, 0.78) 0%,
-    rgba(42, 26, 14, 0.55) 45%,
-    rgba(42, 26, 14, 0.0) 72%
+    rgba(16, 40, 55, 0.78) 0%,
+    rgba(16, 40, 55, 0.55) 45%,
+    rgba(16, 40, 55, 0.0) 72%
   );
   display: flex;
   align-items: center;
@@ -211,9 +211,9 @@ h3 { font-size: clamp(1rem, 2vw, 1.25rem); }
   .hero-banner-overlay {
     background: linear-gradient(
       to top,
-      rgba(42,26,14,0.88) 0%,
-      rgba(42,26,14,0.55) 55%,
-      rgba(42,26,14,0.0) 100%
+      rgba(16,40,55,0.88) 0%,
+      rgba(16,40,55,0.55) 55%,
+      rgba(16,40,55,0.0) 100%
     );
     align-items: flex-end;
     justify-content: flex-start;

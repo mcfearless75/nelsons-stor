@@ -24,10 +24,10 @@ function placeholderSvg(title) {
     .slice(0, 3)
     .map(
       (l, i) =>
-        `<text x="50%" y="${50 + i * 18}" dominant-baseline="middle" text-anchor="middle" fill="#8B5E3C" font-size="13" font-family="Georgia,serif">${l}</text>`
+        `<text x="50%" y="${50 + i * 18}" dominant-baseline="middle" text-anchor="middle" fill="#2E7396" font-size="13" font-family="Georgia,serif">${l}</text>`
     )
     .join("");
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500"><rect width="400" height="500" fill="#FFF8EE" rx="8"/><rect x="20" y="20" width="360" height="460" fill="none" stroke="#E8B84B" stroke-width="2" stroke-dasharray="6 4" rx="6"/><text x="50%" y="36%" dominant-baseline="middle" text-anchor="middle" fill="#C8973A" font-size="48">🐾</text>${textRows}</svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500"><rect width="400" height="500" fill="#FFF8EE" rx="8"/><rect x="20" y="20" width="360" height="460" fill="none" stroke="#5FC0E6" stroke-width="2" stroke-dasharray="6 4" rx="6"/><text x="50%" y="36%" dominant-baseline="middle" text-anchor="middle" fill="#15719B" font-size="48">🐾</text>${textRows}</svg>`;
   return "data:image/svg+xml," + encodeURIComponent(svg);
 }
 

@@ -1,5 +1,5 @@
 function placeholderSvg(title) {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect width="80" height="80" fill="#F5E8D2" rx="6"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#C8973A" font-size="28">&#128062;</text></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect width="80" height="80" fill="#F5E8D2" rx="6"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#15719B" font-size="28">&#128062;</text></svg>`;
   return "data:image/svg+xml," + encodeURIComponent(svg);
 }
 
