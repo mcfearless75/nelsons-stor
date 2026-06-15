@@ -48,13 +48,14 @@ function renderProductGrid(products) {
 
   grid.innerHTML = products
     .map(
-      (p) => `
+      (p, i) => `
     <a class="product-card${p.stock_qty === 0 ? " product-card--soldout" : ""}" href="product.html?id=${encodeURIComponent(p.id)}">
       <div class="product-card__img-wrap">
         <img
           src="${p.image ? esc(p.image) : placeholderSvg(p.title)}"
           alt="${esc(p.title)}"
-          loading="lazy"
+          loading="${i < 4 ? "eager" : "lazy"}"
+          ${i < 4 ? 'fetchpriority="high"' : ""}
           data-fallback-title="${esc(p.title)}"
         />
         ${p.stock_qty === 0 ? '<span class="badge badge--soldout">Sold out</span>' : ""}
