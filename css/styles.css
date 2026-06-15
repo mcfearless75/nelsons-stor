@@ -342,6 +342,26 @@ h3 { font-size: clamp(1rem, 2vw, 1.25rem); }
   background: var(--gold);
   color: var(--white);
 }
+.badge--soldout {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(22, 69, 95, 0.92);
+  color: var(--white);
+  font-size: 0.8rem;
+  padding: 0.4em 0.95em;
+  z-index: 2;
+}
+.product-card--soldout .product-card__img-wrap img {
+  opacity: 0.55;
+  filter: grayscale(0.35);
+}
+.btn-soldout,
+.btn-soldout:hover {
+  background: var(--text-muted, #8a8a8a);
+  cursor: not-allowed;
+  opacity: 0.85;
+}
 .product-card__body {
   padding: 0.9rem 1rem 1rem;
   flex: 1;

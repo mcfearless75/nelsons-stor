@@ -24,18 +24,18 @@ async function initProductPage() {
   const id = params.get("id");
   if (!id) { window.location = "index.html"; return; }
 
-  const resp = await fetch("data/products.json");
-  const catalogue = await resp.json();
-  const product = catalogue.find((p) => p.id === id && p.active);
-
-  if (!product) { window.location = "index.html"; return; }
-  _currentProduct = product;
-
-  let mediaEntry = null;
+  let result = null;
   try {
-    const mResp = await fetch("data/media.json");
-    if (mResp.ok) { const allMedia = await mResp.json(); mediaEntry = allMedia[id] || null; }
-  } catch (e) { /* gallery falls back to the single catalogue image */ }
+    result = await fetchProduct(id);
+  } catch (e) {
+    window.location = "index.html"; return;
+  }
+  if (!result) { window.location = "index.html"; return; }
+
+  const product = result.product;
+  const mediaEntry = result.mediaEntry;
+  if (!product.image) product.image = placeholderSvg(product.title);
+  _currentProduct = product;
 
   document.title = `${product.title} — Nelson's Stor`;
   document.querySelector('meta[name="description"]').content = product.description;
@@ -99,7 +99,14 @@ async function initProductPage() {
     </div>
   `;
 
-  document.getElementById("add-to-basket-btn").addEventListener("click", addToBasket);
+  const addBtn = document.getElementById("add-to-basket-btn");
+  if (product.stock_qty === 0) {
+    addBtn.disabled = true;
+    addBtn.classList.add("btn-soldout");
+    addBtn.innerHTML = `${svgIcon("cart")} Sold out`;
+  } else {
+    addBtn.addEventListener("click", addToBasket);
+  }
 
   buildGallery(product, mediaEntry);
   updateNudge();

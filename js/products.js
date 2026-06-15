@@ -49,14 +49,15 @@ function renderProductGrid(products) {
   grid.innerHTML = products
     .map(
       (p) => `
-    <a class="product-card" href="product.html?id=${encodeURIComponent(p.id)}">
+    <a class="product-card${p.stock_qty === 0 ? " product-card--soldout" : ""}" href="product.html?id=${encodeURIComponent(p.id)}">
       <div class="product-card__img-wrap">
         <img
-          src="${esc(p.image)}"
+          src="${p.image ? esc(p.image) : placeholderSvg(p.title)}"
           alt="${esc(p.title)}"
           loading="lazy"
           data-fallback-title="${esc(p.title)}"
         />
+        ${p.stock_qty === 0 ? '<span class="badge badge--soldout">Sold out</span>' : ""}
         ${p.is_bundle ? '<span class="badge badge--bundle">Bundle</span>' : ""}
         ${p.size === "A6" ? '<span class="badge badge--size">A6</span>' : ""}
       </div>
@@ -108,8 +109,15 @@ function buildCategoryNav(activeSlug) {
 }
 
 async function initShop() {
-  const resp = await fetch("data/products.json");
-  CATALOGUE = await resp.json();
+  const grid = document.getElementById("product-grid");
+  try {
+    CATALOGUE = await fetchCatalogue();
+  } catch (e) {
+    if (grid)
+      grid.innerHTML =
+        '<p class="no-results">Sorry, we couldn\'t load the cards just now. Please refresh in a moment.</p>';
+    return;
+  }
 
   const params = new URLSearchParams(window.location.search);
   const cat = params.get("cat") || "all";
