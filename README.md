@@ -4,6 +4,36 @@ Golden retriever greeting cards, made in Belfast. Static site + Stripe Checkout,
 
 **592 sales · 5.0★ · Zero platform commission (Stripe only)**
 
+Live: **https://nelsonstor.netlify.app**
+
+---
+
+## Current status (handoff — last updated 2026-06-15, commit `86de42e`)
+
+**Done**
+- Full site built and live on Netlify. Mobile-responsive (2-col grid, scrollable category nav).
+- **Real product artwork + galleries** for 34 of 39 cards, pulled from the client's own Etsy shop (NelsonsStor). Each product page has a gallery (multiple images + a 15s video) — stored in `images/cards/<id>/` and indexed in `data/media.json`. Grid thumbnails use `images/cards/<id>.jpg`.
+- **Security hardened**: strict CSP (`script-src 'self'`, no inline JS/handlers), COOP/CORP/HSTS, `esc()` escaping on all injected catalogue data, Stripe redirect-URL validation, function input caps (≤20 items, id ≤64 chars). Server-side prices, env-var secret, no committed secrets.
+- **UI polish**: SVG icon system (`js/icons.js`, no emoji icons), focus-visible rings, 44px touch targets, reduced-motion support.
+
+**Pending / decisions for next session**
+1. **5 products have no Etsy match** (still on paw placeholders) — decide per card:
+   - `st-patricks-irish-stor` — Etsy's St Patrick's listing is an **Irish Donkey**, not a retriever.
+   - `thinking-of-you`, `birthday-beach-roll`, `valentine-nelson-pup` — no matching Etsy listing.
+   - `fathers-day-general` — closest Etsy listing is "Bringing Dad His Trainers".
+   - Options: wire the alternative art, or set `"active": false` to hide them.
+2. **`STRIPE_SECRET_KEY` must be added by Paul** in Netlify env vars — checkout won't work until set (`sk_test_...` to test, `sk_live_...` to go live). `URL` is a Netlify reserved built-in (auto-set, do not add).
+3. Optional: Playwright responsive screenshot pass (375/768/1024); app-level rate limiting on the checkout function (needs Netlify Pro).
+
+**Etsy media pipeline** (to refresh/extend artwork)
+- `data/etsy-media.json` — harvested manifest (product → image URLs + video URL).
+- `scripts/fetch-media.js` — downloads all media from the manifest into `images/cards/<id>/` and rebuilds `data/media.json`. Run: `node scripts/fetch-media.js`.
+- `scripts/etsy-image-manifest.txt` — chosen flat-art (primary grid image) per product.
+
+**Notes**
+- Repo carries ~119MB of media (images + video). Local tooling (`.claude/`, `.claude-flow/`, `.mcp.json`) is gitignored.
+- CSS/JS use `must-revalidate` caching; HTML links `styles.css?v=3` (bump on CSS change if a stale cache is ever seen).
+
 ---
 
 ## Stack
@@ -59,15 +89,15 @@ git commit -m "Nelson's Stor initial build"
 
 ## Images
 
-Drop client images into the correct folders — filenames must match exactly:
+Product artwork is **already in place** for 34/39 cards, pulled from the client's Etsy shop:
 
 | Folder | Contents |
 |--------|----------|
-| `images/cards/` | 39 card JPGs — see filenames in `data/products.json` |
-| `images/nelson/` | `hero.jpg`, `packaging.jpg`, `sticker.jpg`, `flatlay.jpg` |
-| `images/og/` | `og-home.jpg` (1200×630 for social sharing) |
+| `images/cards/<id>.jpg` | Primary grid thumbnail (flat artwork) per product |
+| `images/cards/<id>/` | Full gallery — `01.jpg…NN.jpg` + `video.mp4` per product |
+| `images/nelson/` | About-page brand photos: `packaging.jpg`, `sticker.jpg`, `flatlay.jpg` (still placeholders until client supplies) |
 
-Images: JPG, ~1200px on the long edge, web-compressed. Until images arrive, the site renders SVG placeholders automatically — nothing breaks.
+The 5 unmatched products (see Current status) render SVG paw placeholders automatically — nothing breaks. To add/replace artwork, use the Etsy media pipeline or drop a JPG at `images/cards/<id>.jpg`.
 
 ---
 
