@@ -40,7 +40,7 @@ function primaryImage(rows) {
 async function fetchAllCards(session) {
   const url =
     `${SB_REST}/products?order=sort_order` +
-    `&select=id,title,price_gbp,size,category,is_bundle,active,stock_qty,sort_order,product_media(type,url,sort_order)`;
+    `&select=id,title,description,price_gbp,size,gsm,category,is_bundle,active,stock_qty,sort_order,product_media(type,url,sort_order)`;
   const resp = await fetch(url, { headers: authHeaders(session) });
   if (resp.status === 401) {
     throw new Error("UNAUTHORISED");
