@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin — Nelson's Stor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="images/logo.jpg" />
+  <link rel="apple-touch-icon" href="images/logo.jpg" />
+  <link rel="stylesheet" href="css/styles.css?v=6" />
+  <link rel="stylesheet" href="css/admin.css?v=1" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="site-logo"><img class="site-logo__img" src="images/logo.jpg" alt="Nelson's Stor logo" width="42" height="42" /> Nelson's Stor</a>
+    <nav class="header-nav">
+      <a href="index.html">View shop</a>
+      <button id="logout-btn" class="btn-ghost" type="button" hidden>Sign out</button>
+    </nav>
+  </div>
+</header>
+
+<main class="admin-main">
+
+  <!-- LOGIN -->
+  <section id="login-view" hidden>
+    <div class="login-card">
+      <h2>Admin sign in</h2>
+      <p class="login-card__hint">Manage the Nelson's Stor catalogue.</p>
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="login-email">Email</label>
+          <input id="login-email" type="email" autocomplete="username" required />
+        </div>
+        <div class="field">
+          <label for="login-password">Password</label>
+          <input id="login-password" type="password" autocomplete="current-password" required />
+        </div>
+        <button id="login-submit" class="btn-primary" type="submit">Sign in</button>
+        <p id="login-error" class="form-error" role="alert" hidden></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="dashboard-view" hidden>
+    <div class="admin-head">
+      <div>
+        <h1>Cards</h1>
+        <p>Read-only view. Editing arrives in the next phase.</p>
+      </div>
+    </div>
+
+    <div class="admin-toolbar">
+      <input id="admin-search" type="search" placeholder="Search by title or id…" aria-label="Search cards" />
+      <select id="admin-cat" aria-label="Filter by category"></select>
+      <span id="card-count" class="card-count"></span>
+    </div>
+
+    <p id="list-status" class="list-status" hidden></p>
+    <div id="card-list" class="card-list"></div>
+  </section>
+
+</main>
+
+<script src="js/admin-auth.js?v=1"></script>
+<script src="js/admin.js?v=1"></script>
+</body>
+</html>
