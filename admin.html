@@ -11,7 +11,7 @@
   <link rel="icon" href="images/logo.jpg" />
   <link rel="apple-touch-icon" href="images/logo.jpg" />
   <link rel="stylesheet" href="css/styles.css?v=6" />
-  <link rel="stylesheet" href="css/admin.css?v=2" />
+  <link rel="stylesheet" href="css/admin.css?v=3" />
 </head>
 <body>
 
@@ -164,9 +164,33 @@
   </div>
 </div>
 
+<!-- MEDIA MANAGER MODAL -->
+<div id="media-manager" class="modal" hidden>
+  <div class="modal__backdrop" data-close-modal="media-manager"></div>
+  <div class="modal__panel modal__panel--wide" role="dialog" aria-modal="true" aria-labelledby="mm-heading">
+    <div class="modal__head">
+      <h2 id="mm-heading">Media — <span id="mm-title"></span></h2>
+      <button class="modal__close" type="button" data-close-modal="media-manager" aria-label="Close">×</button>
+    </div>
+    <p class="mm-hint">The first image is the grid thumbnail. Use ★ to set the primary image, ◀ ▶ to reorder, ✕ to remove.</p>
+    <div id="mm-strip" class="mm-strip"></div>
+    <label id="mm-dropzone" class="mm-dropzone" for="mm-file">
+      <span>Drag images or a video here, or <strong>browse</strong></span>
+      <input id="mm-file" type="file" accept="image/*,video/*" multiple hidden />
+    </label>
+    <p id="mm-status" class="mm-status" hidden></p>
+    <p id="mm-error" class="form-error" role="alert" hidden></p>
+    <div class="modal__actions">
+      <button class="btn-primary btn-primary--inline" type="button" data-close-modal="media-manager">Done</button>
+    </div>
+  </div>
+</div>
+
 <script src="js/admin-auth.js?v=1"></script>
-<script src="js/admin-data.js?v=1"></script>
-<script src="js/admin.js?v=2"></script>
+<script src="js/admin-data.js?v=2"></script>
+<script src="js/admin-storage.js?v=1"></script>
+<script src="js/admin.js?v=3"></script>
 <script src="js/admin-editor.js?v=2"></script>
+<script src="js/admin-media.js?v=1"></script>
 </body>
 </html>

@@ -77,7 +77,10 @@ function cardRow(card) {
         ${card.is_bundle ? '<span class="abadge abadge--info">Bundle</span>' : ""}
         ${stockBadge(card)}
       </div>
-      <button class="card-row__edit btn-ghost" type="button" data-edit="${esc(card.id)}">Edit</button>
+      <div class="card-row__actions">
+        <button class="btn-ghost" type="button" data-edit="${esc(card.id)}">Edit</button>
+        <button class="btn-ghost" type="button" data-media="${esc(card.id)}">Media</button>
+      </div>
     </div>`;
 }
 
@@ -121,11 +124,35 @@ function applySavedCard(row) {
   renderList();
 }
 
+// Refresh a card's media (and its grid thumbnail) after the media manager edits.
+function applyMediaChange(productId, mediaRows) {
+  const idx = CARDS.findIndex((c) => c.id === productId);
+  if (idx === -1) return;
+  const product_media = mediaRows.map((m) => ({
+    type: m.type,
+    url: m.url,
+    sort_order: m.sort_order,
+  }));
+  CARDS[idx] = {
+    ...CARDS[idx],
+    product_media,
+    image: primaryImage(product_media),
+  };
+  renderList();
+}
+
 function handleListClick(event) {
-  const btn = event.target.closest("[data-edit]");
-  if (!btn) return;
-  const card = CARDS.find((c) => c.id === btn.getAttribute("data-edit"));
-  if (card) openCardEditor(SESSION, card, applySavedCard);
+  const editBtn = event.target.closest("[data-edit]");
+  if (editBtn) {
+    const card = CARDS.find((c) => c.id === editBtn.getAttribute("data-edit"));
+    if (card) openCardEditor(SESSION, card, applySavedCard);
+    return;
+  }
+  const mediaBtn = event.target.closest("[data-media]");
+  if (mediaBtn) {
+    const card = CARDS.find((c) => c.id === mediaBtn.getAttribute("data-media"));
+    if (card) openMediaManager(SESSION, card, applyMediaChange);
+  }
 }
 
 function buildCategoryOptions() {
@@ -201,6 +228,7 @@ async function handleSignOut() {
 async function initAdmin() {
   buildCategoryOptions();
   initEditors();
+  initMediaManager();
   document.getElementById("login-form").addEventListener("submit", handleLogin);
   document.getElementById("logout-btn").addEventListener("click", handleSignOut);
   document.getElementById("admin-search").addEventListener("input", renderList);
