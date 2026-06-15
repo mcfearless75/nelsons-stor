@@ -133,13 +133,12 @@ h3 { font-size: clamp(1rem, 2vw, 1.25rem); }
 .hero-banner-wrap {
   position: relative;
   width: 100%;
-  max-height: 520px;
+  height: clamp(360px, 42vw, 520px);
   overflow: hidden;
 }
 .hero-banner-img {
   width: 100%;
   height: 100%;
-  max-height: 520px;
   object-fit: cover;
   object-position: 20% 30%;
   display: block;
@@ -206,24 +205,24 @@ h3 { font-size: clamp(1rem, 2vw, 1.25rem); }
   transform: translateY(-2px);
 }
 @media (max-width: 600px) {
-  .hero-banner-wrap { max-height: 340px; }
-  .hero-banner-img { max-height: 340px; object-position: 40% 25%; }
+  .hero-banner-wrap { height: 68vh; min-height: 420px; max-height: 560px; }
+  .hero-banner-img { object-position: 50% 22%; }
   .hero-banner-overlay {
     background: linear-gradient(
       to top,
-      rgba(16,40,55,0.88) 0%,
-      rgba(16,40,55,0.55) 55%,
-      rgba(16,40,55,0.0) 100%
+      rgba(16,40,55,0.92) 0%,
+      rgba(16,40,55,0.6) 45%,
+      rgba(16,40,55,0.1) 100%
     );
     align-items: flex-end;
     justify-content: flex-start;
-    padding: 0 1.25rem 1.5rem;
+    padding: 0 1.25rem 2rem;
   }
   .hero-text { max-width: 100%; }
-  .hero-eyebrow { display: none; }
-  .hero-title { font-size: clamp(1.25rem, 5.5vw, 1.7rem); margin-bottom: 0.5rem; }
-  .hero-sub { display: none; }
-  .hero-cta { font-size: 0.85rem; padding: 0.65em 1.3em; }
+  .hero-eyebrow { display: inline-block; margin-bottom: 0.75rem; }
+  .hero-title { font-size: clamp(1.6rem, 7vw, 2.2rem); margin-bottom: 0.6rem; }
+  .hero-sub { display: block; font-size: 0.95rem; margin-bottom: 1rem; }
+  .hero-cta { font-size: 0.95rem; padding: 0.8em 1.6em; }
 }
 
 /* === TRUST STRIP === */
