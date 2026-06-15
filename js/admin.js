@@ -77,6 +77,7 @@ function cardRow(card) {
         ${card.is_bundle ? '<span class="abadge abadge--info">Bundle</span>' : ""}
         ${stockBadge(card)}
       </div>
+      <button class="card-row__edit btn-ghost" type="button" data-edit="${esc(card.id)}">Edit</button>
     </div>`;
 }
 
@@ -103,6 +104,28 @@ function renderList() {
   list.innerHTML = filtered.length
     ? filtered.map(cardRow).join("")
     : '<p class="admin-empty">No cards match that search.</p>';
+}
+
+// Merge a saved product row back into local state, preserving media (which the
+// PATCH response doesn't include), then re-render.
+function applySavedCard(row) {
+  const idx = CARDS.findIndex((c) => c.id === row.id);
+  if (idx === -1) return;
+  const existing = CARDS[idx];
+  CARDS[idx] = {
+    ...existing,
+    ...row,
+    product_media: existing.product_media,
+    image: existing.image,
+  };
+  renderList();
+}
+
+function handleListClick(event) {
+  const btn = event.target.closest("[data-edit]");
+  if (!btn) return;
+  const card = CARDS.find((c) => c.id === btn.getAttribute("data-edit"));
+  if (card) openCardEditor(SESSION, card, applySavedCard);
 }
 
 function buildCategoryOptions() {
@@ -177,10 +200,15 @@ async function handleSignOut() {
 
 async function initAdmin() {
   buildCategoryOptions();
+  initEditors();
   document.getElementById("login-form").addEventListener("submit", handleLogin);
   document.getElementById("logout-btn").addEventListener("click", handleSignOut);
   document.getElementById("admin-search").addEventListener("input", renderList);
   document.getElementById("admin-cat").addEventListener("change", renderList);
+  document.getElementById("card-list").addEventListener("click", handleListClick);
+  document
+    .getElementById("postage-btn")
+    .addEventListener("click", () => openPostageEditor(SESSION));
 
   SESSION = await getValidSession();
   if (SESSION) {
