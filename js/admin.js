@@ -80,6 +80,7 @@ function cardRow(card) {
       <div class="card-row__actions">
         <button class="btn-ghost" type="button" data-edit="${esc(card.id)}">Edit</button>
         <button class="btn-ghost" type="button" data-media="${esc(card.id)}">Media</button>
+        <button class="btn-ghost btn-ghost--danger" type="button" data-delete="${esc(card.id)}">Delete</button>
       </div>
     </div>`;
 }
@@ -152,6 +153,60 @@ function handleListClick(event) {
   if (mediaBtn) {
     const card = CARDS.find((c) => c.id === mediaBtn.getAttribute("data-media"));
     if (card) openMediaManager(SESSION, card, applyMediaChange);
+    return;
+  }
+  const delBtn = event.target.closest("[data-delete]");
+  if (delBtn) {
+    const card = CARDS.find((c) => c.id === delBtn.getAttribute("data-delete"));
+    if (card) handleDeleteCard(card);
+  }
+}
+
+// Next free sort_order so a new card lands at the end of the grid.
+function nextSortOrder() {
+  return CARDS.reduce((max, c) => Math.max(max, c.sort_order || 0), 0) + 1;
+}
+
+// Add a freshly created card to local state and jump straight into its (empty)
+// media manager so the owner can add photos.
+function applyNewCard(row) {
+  const card = { ...row, product_media: [], image: "" };
+  CARDS.push(card);
+  renderList();
+  openMediaManager(SESSION, card, applyMediaChange);
+}
+
+function handleAddCard() {
+  openCardCreator(SESSION, { sort_order: nextSortOrder() }, applyNewCard);
+}
+
+// Remove a card end-to-end: Storage objects, media rows, then the product row.
+async function deleteCardCompletely(session, id) {
+  const media = await fetchProductMedia(session, id);
+  for (const m of media) {
+    await deleteObject(session, storagePathFromUrl(m.url));
+  }
+  await deleteProductMedia(session, id);
+  await deleteProduct(session, id);
+}
+
+async function handleDeleteCard(card) {
+  const ok = window.confirm(
+    `Permanently delete “${card.title}”?\n\n` +
+      "This removes the card and all its photos and video. It can't be undone.\n\n" +
+      "Tip: to just take it off the shop, use Edit and untick “Live on shop” instead."
+  );
+  if (!ok) return;
+  try {
+    await deleteCardCompletely(SESSION, card.id);
+    CARDS = CARDS.filter((c) => c.id !== card.id);
+    renderList();
+  } catch (e) {
+    if (e.message === "UNAUTHORISED") {
+      await handleSignOut();
+      return;
+    }
+    window.alert(`Couldn't delete the card: ${e.message}`);
   }
 }
 
@@ -234,6 +289,7 @@ async function initAdmin() {
   document.getElementById("admin-search").addEventListener("input", renderList);
   document.getElementById("admin-cat").addEventListener("change", renderList);
   document.getElementById("card-list").addEventListener("click", handleListClick);
+  document.getElementById("add-card-btn").addEventListener("click", handleAddCard);
   document
     .getElementById("postage-btn")
     .addEventListener("click", () => openPostageEditor(SESSION));

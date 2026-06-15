@@ -11,7 +11,7 @@
   <link rel="icon" href="images/logo.jpg" />
   <link rel="apple-touch-icon" href="images/logo.jpg" />
   <link rel="stylesheet" href="css/styles.css?v=6" />
-  <link rel="stylesheet" href="css/admin.css?v=3" />
+  <link rel="stylesheet" href="css/admin.css?v=5" />
 </head>
 <body>
 
@@ -54,7 +54,10 @@
         <h1>Cards</h1>
         <p>Edit any card's details, price and stock. Changes go live instantly.</p>
       </div>
-      <button id="postage-btn" class="btn-ghost" type="button">Postage settings</button>
+      <div class="admin-head__actions">
+        <button id="add-card-btn" class="btn-primary btn-primary--inline" type="button">+ Add new card</button>
+        <button id="postage-btn" class="btn-ghost" type="button">Postage settings</button>
+      </div>
     </div>
 
     <div class="admin-toolbar">
@@ -78,7 +81,11 @@
       <button class="modal__close" type="button" data-close-modal="card-editor" aria-label="Close">×</button>
     </div>
     <form id="card-editor-form" novalidate>
-      <p class="ce-id-line">ID: <code id="ce-id"></code></p>
+      <p class="ce-id-line" id="ce-id-line">ID: <code id="ce-id"></code></p>
+      <div class="field" id="ce-id-field" hidden>
+        <label for="ce-id-input">Card ID <span class="field-hint">lowercase slug, used in the link — can't be changed later</span></label>
+        <input id="ce-id-input" type="text" autocomplete="off" placeholder="e.g. nelson-snowy-walk-xmas" />
+      </div>
       <div class="field">
         <label for="ce-title">Title</label>
         <input id="ce-title" type="text" required />
@@ -187,10 +194,10 @@
 </div>
 
 <script src="js/admin-auth.js?v=1"></script>
-<script src="js/admin-data.js?v=2"></script>
+<script src="js/admin-data.js?v=3"></script>
 <script src="js/admin-storage.js?v=1"></script>
-<script src="js/admin.js?v=3"></script>
-<script src="js/admin-editor.js?v=2"></script>
+<script src="js/admin.js?v=4"></script>
+<script src="js/admin-editor.js?v=3"></script>
 <script src="js/admin-media.js?v=1"></script>
 </body>
 </html>

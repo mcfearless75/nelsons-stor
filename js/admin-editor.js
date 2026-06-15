@@ -3,8 +3,21 @@
 // all loaded before this file.
 
 const SIZES = ["5x7", "A6"];
-let cardEditCtx = { session: null, card: null, onSaved: null };
+let cardEditCtx = { session: null, card: null, onSaved: null, mode: "edit" };
 let postageCtx = { session: null, settings: null, onSaved: null };
+// While true, the id field has been hand-edited so we stop auto-syncing it from
+// the title (create mode only).
+let slugTouched = false;
+
+// Build a URL-safe slug id from free text (e.g. "Get Well Soon!" → "get-well-soon").
+function slugify(text) {
+  return String(text || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+}
 
 function val(id) {
   return document.getElementById(id).value;
@@ -39,10 +52,8 @@ function fillSelect(selectEl, entries, selected) {
     .join("");
 }
 
-function openCardEditor(session, card, onSaved) {
-  closeModal("postage-editor");
-  cardEditCtx = { session, card, onSaved };
-  document.getElementById("ce-id").textContent = card.id;
+// Populate every editor field from a card-like object.
+function fillCardFields(card) {
   document.getElementById("ce-title").value = card.title || "";
   document.getElementById("ce-description").value = card.description || "";
   document.getElementById("ce-price").value =
@@ -64,9 +75,57 @@ function openCardEditor(session, card, onSaved) {
     card.sort_order != null ? card.sort_order : "";
   document.getElementById("ce-bundle").checked = !!card.is_bundle;
   document.getElementById("ce-active").checked = !!card.active;
+}
+
+// Switch the modal's chrome between editing an existing card and creating one.
+function setEditorMode(mode) {
+  const isCreate = mode === "create";
+  document.getElementById("ce-heading").textContent = isCreate
+    ? "Add new card"
+    : "Edit card";
+  document.getElementById("ce-save").textContent = isCreate
+    ? "Create card"
+    : "Save changes";
+  document.getElementById("ce-id-line").hidden = isCreate;
+  document.getElementById("ce-id-field").hidden = !isCreate;
+}
+
+function openCardEditor(session, card, onSaved) {
+  closeModal("postage-editor");
+  cardEditCtx = { session, card, onSaved, mode: "edit" };
+  document.getElementById("ce-id").textContent = card.id;
+  fillCardFields(card);
+  setEditorMode("edit");
   setEditorError("ce-error", "");
   openModal("card-editor");
   document.getElementById("ce-title").focus();
+}
+
+// Open the editor blank to create a new card. `defaults` may carry a suggested
+// sort_order so new cards land at the end of the grid.
+function openCardCreator(session, defaults, onCreated) {
+  closeModal("postage-editor");
+  cardEditCtx = { session, card: null, onSaved: onCreated, mode: "create" };
+  slugTouched = false;
+  fillCardFields({
+    size: SIZES[0],
+    gsm: 350,
+    category: "",
+    active: true,
+    is_bundle: false,
+    sort_order: defaults && defaults.sort_order != null ? defaults.sort_order : "",
+  });
+  document.getElementById("ce-id-input").value = "";
+  setEditorMode("create");
+  setEditorError("ce-error", "");
+  openModal("card-editor");
+  document.getElementById("ce-title").focus();
+}
+
+// In create mode, mirror the title into the id field until it's hand-edited.
+function syncSlugFromTitle() {
+  if (cardEditCtx.mode !== "create" || slugTouched) return;
+  document.getElementById("ce-id-input").value = slugify(val("ce-title"));
 }
 
 // Validate + build the PATCH body. Throws Error with a friendly message.
@@ -112,18 +171,32 @@ function readCardPatch() {
 async function handleCardSave(event) {
   event.preventDefault();
   setEditorError("ce-error", "");
+  const isCreate = cardEditCtx.mode === "create";
   const btn = document.getElementById("ce-save");
   let patch;
   try {
     patch = readCardPatch();
+    if (isCreate) {
+      const id = slugify(val("ce-id-input"));
+      if (!id)
+        throw new Error("Enter a card ID using letters, numbers and hyphens.");
+      patch.id = id;
+    }
   } catch (e) {
     setEditorError("ce-error", e.message);
     return;
   }
   btn.disabled = true;
-  btn.textContent = "Saving…";
+  btn.textContent = isCreate ? "Creating…" : "Saving…";
   try {
-    const row = await updateProduct(cardEditCtx.session, cardEditCtx.card.id, patch);
+    let row;
+    if (isCreate) {
+      if (await productIdExists(cardEditCtx.session, patch.id))
+        throw new Error(`The ID “${patch.id}” is already taken — choose another.`);
+      row = await insertProduct(cardEditCtx.session, patch);
+    } else {
+      row = await updateProduct(cardEditCtx.session, cardEditCtx.card.id, patch);
+    }
     if (cardEditCtx.onSaved) cardEditCtx.onSaved(row);
     closeModal("card-editor");
   } catch (e) {
@@ -134,7 +207,7 @@ async function handleCardSave(event) {
     }
   } finally {
     btn.disabled = false;
-    btn.textContent = "Save changes";
+    btn.textContent = isCreate ? "Create card" : "Save changes";
   }
 }
 
@@ -214,6 +287,10 @@ async function handlePostageSave(event) {
 
 function initEditors() {
   document.getElementById("card-editor-form").addEventListener("submit", handleCardSave);
+  document.getElementById("ce-title").addEventListener("input", syncSlugFromTitle);
+  document.getElementById("ce-id-input").addEventListener("input", () => {
+    slugTouched = true;
+  });
   document.getElementById("postage-editor-form").addEventListener("submit", handlePostageSave);
   document.getElementById("pe-uk").addEventListener("input", poundsPreview);
   document.getElementById("pe-free").addEventListener("input", poundsPreview);

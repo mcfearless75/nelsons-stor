@@ -79,6 +79,10 @@
   transition: background var(--transition), border-color var(--transition);
 }
 .btn-ghost:hover { background: var(--cream-mid); border-color: var(--gold-light); }
+.btn-ghost--danger { color: #b3261e; }
+.btn-ghost--danger:hover { background: #fdecea; border-color: #f0b4ae; }
+
+.admin-head__actions { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
 
 .form-error {
   margin-top: 0.9rem;
@@ -214,6 +218,10 @@ body.modal-open { overflow: hidden; }
   padding: clamp(1rem, 5vh, 4rem) 1rem;
   overflow-y: auto;
 }
+/* The class rule above sets display:flex, which overrides the `hidden`
+   attribute's default display:none — without this guard every modal renders
+   open on load. */
+.modal[hidden] { display: none; }
 .modal__backdrop {
   position: fixed;
   inset: 0;
