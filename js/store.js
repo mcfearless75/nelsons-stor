@@ -12,6 +12,23 @@ function sbHeaders() {
   };
 }
 
+// Postage settings (single row) — same source the checkout function charges from,
+// so the cart can show a total that matches the till. Falls back to defaults.
+const DEFAULT_POSTAGE = { uk_standard_pence: 150, uk_free_threshold: 4, intl_pence: 350 };
+async function fetchSettings() {
+  try {
+    const resp = await fetch(
+      `${SB_REST}/settings?select=uk_standard_pence,uk_free_threshold,intl_pence&limit=1`,
+      { headers: sbHeaders() }
+    );
+    if (!resp.ok) throw new Error(String(resp.status));
+    const rows = await resp.json();
+    return rows[0] || DEFAULT_POSTAGE;
+  } catch {
+    return DEFAULT_POSTAGE;
+  }
+}
+
 // Normalise embedded product_media rows into the shape the pages expect.
 function mapMedia(rows) {
   const media = Array.isArray(rows)

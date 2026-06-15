@@ -3,14 +3,20 @@ function placeholderSvg(title) {
   return "data:image/svg+xml," + encodeURIComponent(svg);
 }
 
+// Postage settings, loaded live from Supabase so the cart total matches the till.
+let CART_POSTAGE = typeof DEFAULT_POSTAGE !== "undefined"
+  ? DEFAULT_POSTAGE
+  : { uk_standard_pence: 150, uk_free_threshold: 4, intl_pence: 350 };
+
 function renderCart() {
   const cart = getCart();
   const wrap = document.getElementById("cart-wrap");
   const count = cartCount();
   const total = cartTotal();
-  const postage = count >= 4 ? 0 : 1.5;
+  const threshold = CART_POSTAGE.uk_free_threshold;
+  const postage = count >= threshold ? 0 : CART_POSTAGE.uk_standard_pence / 100;
   const grandTotal = total + postage;
-  const toFree = 4 - count;
+  const toFree = threshold - count;
 
   if (cart.length === 0) {
     wrap.innerHTML = `
@@ -41,7 +47,7 @@ function renderCart() {
     </div>
   `).join("");
 
-  const thresholdMsg = toFree > 0 && toFree <= 3
+  const thresholdMsg = toFree > 0 && toFree < threshold
     ? `<div class="postage-threshold-msg">${svgIcon("sparkles")} Add ${toFree} more card${toFree > 1 ? "s" : ""} for <strong>free UK postage</strong>!</div>`
     : "";
 
@@ -103,4 +109,14 @@ document.addEventListener("click", (e) => {
   }
 });
 
-document.addEventListener("DOMContentLoaded", renderCart);
+// Load live postage settings (if available) before the first render, then render.
+document.addEventListener("DOMContentLoaded", async () => {
+  if (typeof fetchSettings === "function") {
+    try {
+      CART_POSTAGE = await fetchSettings();
+    } catch {
+      /* keep defaults */
+    }
+  }
+  renderCart();
+});
