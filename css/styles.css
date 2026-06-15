@@ -172,20 +172,21 @@ h3 { font-size: clamp(1rem, 2vw, 1.25rem); }
   margin-bottom: 1rem;
 }
 .hero-title {
-  margin-bottom: 1.1rem;
+  font-size: clamp(1.3rem, 2.6vw, 2.1rem);
+  margin-bottom: 0.8rem;
   color: var(--white);
-  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.4);
 }
 .hero-title em {
   font-style: italic;
   color: var(--gold-light);
 }
 .hero-sub {
-  font-size: 1.05rem;
+  font-size: 0.9rem;
   color: rgba(255,248,238,0.9);
-  margin-bottom: 1.75rem;
-  max-width: 400px;
-  line-height: 1.6;
+  margin-bottom: 1.2rem;
+  max-width: 340px;
+  line-height: 1.5;
 }
 .hero-cta {
   display: inline-flex;
@@ -194,8 +195,8 @@ h3 { font-size: clamp(1rem, 2vw, 1.25rem); }
   background: var(--gold);
   color: var(--white);
   font-weight: 700;
-  font-size: 1rem;
-  padding: 0.85em 1.8em;
+  font-size: 0.88rem;
+  padding: 0.7em 1.5em;
   border-radius: 999px;
   transition: background var(--transition), transform var(--transition);
   box-shadow: 0 4px 20px rgba(0,0,0,0.25);
