@@ -7,14 +7,15 @@ const SUPABASE_ANON_KEY = "sb_publishable_2U9Dned6-ccj3tzQ-5xnWA_d1EddkQi";
 const SB_REST = `${SUPABASE_URL}/rest/v1`;
 
 // Safe fallbacks only if the settings row is somehow missing.
-const DEFAULT_POSTAGE = { uk_standard_pence: 150, uk_free_threshold: 4, intl_pence: 350 };
+// uk = UK, usa = USA, intl_pence = Rest of world. No free postage.
+const DEFAULT_POSTAGE = { uk_standard_pence: 150, usa_pence: 500, intl_pence: 350 };
 
 function sbHeaders() {
   return { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` };
 }
 
 function clampQty(q) {
-  return Math.max(1, Math.min(99, parseInt(q, 10) || 1));
+  return Math.max(1, Math.min(100, parseInt(q, 10) || 1));
 }
 
 // Fetch the requested products live. Returns a map id -> {title, amount, stock_qty}.
@@ -41,7 +42,7 @@ async function fetchProducts(ids) {
 async function fetchPostage() {
   try {
     const resp = await fetch(
-      `${SB_REST}/settings?select=uk_standard_pence,uk_free_threshold,intl_pence&limit=1`,
+      `${SB_REST}/settings?select=uk_standard_pence,usa_pence,intl_pence&limit=1`,
       { headers: sbHeaders() }
     );
     if (!resp.ok) throw new Error(String(resp.status));
@@ -51,6 +52,20 @@ async function fetchPostage() {
     console.warn("Postage settings unavailable; using defaults.");
     return DEFAULT_POSTAGE;
   }
+}
+
+function shippingOption(amount, name, minDays, maxDays) {
+  return {
+    shipping_rate_data: {
+      type: "fixed_amount",
+      fixed_amount: { amount, currency: "gbp" },
+      display_name: name,
+      delivery_estimate: {
+        minimum: { unit: "business_day", value: minDays },
+        maximum: { unit: "business_day", value: maxDays },
+      },
+    },
+  };
 }
 
 function json(statusCode, payload) {
@@ -117,41 +132,19 @@ exports.handler = async (event) => {
       });
     }
 
-    const ukPence =
-      totalQty >= postage.uk_free_threshold ? 0 : postage.uk_standard_pence;
+    // Three flat postage zones — the customer selects the one for their address.
+    const shipping_options = [
+      shippingOption(postage.uk_standard_pence, "UK Standard (2–3 days)", 2, 3),
+      shippingOption(postage.usa_pence, "USA (7–10 days)", 7, 10),
+      shippingOption(postage.intl_pence, "Rest of world (7–14 days)", 7, 14),
+    ];
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items,
       allow_promotion_codes: true,
       shipping_address_collection: { allowed_countries: ["GB", "IE", "US", "CA", "AU"] },
-      shipping_options: [
-        {
-          shipping_rate_data: {
-            type: "fixed_amount",
-            fixed_amount: { amount: ukPence, currency: "gbp" },
-            display_name:
-              totalQty >= postage.uk_free_threshold
-                ? `UK Standard — FREE (${postage.uk_free_threshold}+ cards)`
-                : "UK Standard (2–3 days)",
-            delivery_estimate: {
-              minimum: { unit: "business_day", value: 2 },
-              maximum: { unit: "business_day", value: 3 },
-            },
-          },
-        },
-        {
-          shipping_rate_data: {
-            type: "fixed_amount",
-            fixed_amount: { amount: postage.intl_pence, currency: "gbp" },
-            display_name: "International (7–10 days)",
-            delivery_estimate: {
-              minimum: { unit: "business_day", value: 7 },
-              maximum: { unit: "business_day", value: 10 },
-            },
-          },
-        },
-      ],
+      shipping_options,
       success_url: `${process.env.URL}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.URL}/cancel.html`,
     });

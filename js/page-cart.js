@@ -13,10 +13,8 @@ function renderCart() {
   const wrap = document.getElementById("cart-wrap");
   const count = cartCount();
   const total = cartTotal();
-  const threshold = CART_POSTAGE.uk_free_threshold;
-  const postage = count >= threshold ? 0 : CART_POSTAGE.uk_standard_pence / 100;
+  const postage = CART_POSTAGE.uk_standard_pence / 100;
   const grandTotal = total + postage;
-  const toFree = threshold - count;
 
   if (cart.length === 0) {
     wrap.innerHTML = `
@@ -37,7 +35,7 @@ function renderCart() {
         <div class="cart-item__controls">
           <div class="qty-ctrl">
             <button type="button" data-act="dec" data-id="${esc(item.id)}" aria-label="Decrease quantity">−</button>
-            <input type="number" value="${Number(item.qty)}" min="1" max="20" readonly aria-label="Quantity" />
+            <input type="number" value="${Number(item.qty)}" min="1" max="100" readonly aria-label="Quantity" />
             <button type="button" data-act="inc" data-id="${esc(item.id)}" aria-label="Increase quantity">+</button>
           </div>
           <button class="cart-item__remove" type="button" data-act="remove" data-id="${esc(item.id)}">Remove</button>
@@ -47,13 +45,11 @@ function renderCart() {
     </div>
   `).join("");
 
-  const thresholdMsg = toFree > 0 && toFree < threshold
-    ? `<div class="postage-threshold-msg">${svgIcon("sparkles")} Add ${toFree} more card${toFree > 1 ? "s" : ""} for <strong>free UK postage</strong>!</div>`
-    : "";
+  const thresholdMsg =
+    `<div class="postage-threshold-msg">${svgIcon("sparkles")} Posting to the USA or beyond? Choose your region at checkout.</div>`;
 
-  const postageRow = postage === 0
-    ? `<div class="summary-row postage-free"><span>UK Postage</span><span>FREE</span></div>`
-    : `<div class="summary-row"><span>UK Postage</span><span>£${postage.toFixed(2)}</span></div>`;
+  const postageRow =
+    `<div class="summary-row"><span>UK Postage</span><span>£${postage.toFixed(2)}</span></div>`;
 
   wrap.innerHTML = `
     <div class="cart-layout">

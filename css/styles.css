@@ -997,7 +997,25 @@ h3 { font-size: clamp(1rem, 2vw, 1.25rem); }
 a, button, input { -webkit-tap-highlight-color: transparent; }
 
 .product-card, .gallery-thumb, .cat-btn, .cart-link,
-.hero-cta, .btn-primary, .btn-secondary, .qty-ctrl button { cursor: pointer; }
+.hero-cta, .btn-primary, .btn-secondary, .qty-ctrl button,
+.bundle-chip { cursor: pointer; }
+
+/* Bundle quantity picker (product page) */
+.bundle-row { margin: 0.75rem 0 0.5rem; }
+.bundle-presets { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
+.bundle-chip {
+  min-width: 44px; min-height: 40px; padding: 0 0.6rem;
+  border: 1.5px solid var(--cream-dark, #e6d8c0);
+  background: var(--white, #fff); color: var(--brown, #5a3e2b);
+  border-radius: 999px; font-weight: 700; font-size: 0.9rem;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.bundle-chip:hover { border-color: var(--gold, #c89b3c); }
+.bundle-chip.active {
+  background: var(--brown, #5a3e2b); color: var(--white, #fff);
+  border-color: var(--brown, #5a3e2b);
+}
+.qty-subtotal { margin-left: 0.8rem; font-weight: 700; color: var(--brown, #5a3e2b); }
 
 /* Touch targets — minimum 44px for primary controls */
 .header-nav a { padding: 0.5rem 0.3rem; display: inline-flex; align-items: center; }

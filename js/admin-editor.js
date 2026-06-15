@@ -214,14 +214,14 @@ async function handleCardSave(event) {
 // === POSTAGE EDITOR ===
 
 function poundsPreview() {
-  const std = parseInt(val("pe-uk"), 10);
-  const free = parseInt(val("pe-free"), 10);
+  const uk = parseInt(val("pe-uk"), 10);
+  const usa = parseInt(val("pe-usa"), 10);
   const intl = parseInt(val("pe-intl"), 10);
   const fmt = (p) => (Number.isNaN(p) ? "—" : `£${(p / 100).toFixed(2)}`);
   document.getElementById("pe-preview").innerHTML =
-    `UK standard: <strong>${fmt(std)}</strong> · ` +
-    `free over <strong>${Number.isNaN(free) ? "—" : free}</strong> cards · ` +
-    `International: <strong>${fmt(intl)}</strong>`;
+    `UK: <strong>${fmt(uk)}</strong> · ` +
+    `USA: <strong>${fmt(usa)}</strong> · ` +
+    `Rest of world: <strong>${fmt(intl)}</strong>`;
 }
 
 async function openPostageEditor(session, onSaved) {
@@ -235,7 +235,7 @@ async function openPostageEditor(session, onSaved) {
     if (!settings) throw new Error("No postage settings row found.");
     postageCtx = { session, settings, onSaved };
     document.getElementById("pe-uk").value = settings.uk_standard_pence;
-    document.getElementById("pe-free").value = settings.uk_free_threshold;
+    document.getElementById("pe-usa").value = settings.usa_pence;
     document.getElementById("pe-intl").value = settings.intl_pence;
     poundsPreview();
     document.getElementById("pe-loading").hidden = true;
@@ -248,11 +248,11 @@ async function openPostageEditor(session, onSaved) {
 
 function readPostagePatch() {
   const uk = parseInt(val("pe-uk"), 10);
-  const free = parseInt(val("pe-free"), 10);
+  const usa = parseInt(val("pe-usa"), 10);
   const intl = parseInt(val("pe-intl"), 10);
-  if ([uk, free, intl].some((n) => Number.isNaN(n) || n < 0))
+  if ([uk, usa, intl].some((n) => Number.isNaN(n) || n < 0))
     throw new Error("All postage values must be whole numbers, 0 or more.");
-  return { uk_standard_pence: uk, uk_free_threshold: free, intl_pence: intl };
+  return { uk_standard_pence: uk, usa_pence: usa, intl_pence: intl };
 }
 
 async function handlePostageSave(event) {
@@ -293,7 +293,7 @@ function initEditors() {
   });
   document.getElementById("postage-editor-form").addEventListener("submit", handlePostageSave);
   document.getElementById("pe-uk").addEventListener("input", poundsPreview);
-  document.getElementById("pe-free").addEventListener("input", poundsPreview);
+  document.getElementById("pe-usa").addEventListener("input", poundsPreview);
   document.getElementById("pe-intl").addEventListener("input", poundsPreview);
 
   document.querySelectorAll("[data-close-modal]").forEach((el) => {

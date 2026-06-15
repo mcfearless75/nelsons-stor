@@ -66,17 +66,27 @@ async function initProductPage() {
             <span class="spec-chip">Blank inside</span>
           </div>
 
-          <div id="postage-nudge" class="postage-nudge">
-            ${svgIcon("sparkles")} Add just <strong id="nudge-count">1</strong> more card to get <strong>free UK postage</strong>!
+          <div class="bundle-row">
+            <span class="qty-label">Buy as a bundle</span>
+            <div class="bundle-presets" id="bundle-presets">
+              <button type="button" class="bundle-chip active" data-qty="1">1</button>
+              <button type="button" class="bundle-chip" data-qty="2">2</button>
+              <button type="button" class="bundle-chip" data-qty="5">5</button>
+              <button type="button" class="bundle-chip" data-qty="10">10</button>
+              <button type="button" class="bundle-chip" data-qty="20">20</button>
+              <button type="button" class="bundle-chip" data-qty="50">50</button>
+              <button type="button" class="bundle-chip" data-qty="100">100</button>
+            </div>
           </div>
 
           <div class="qty-row">
             <span class="qty-label">Quantity</span>
             <div class="qty-ctrl">
               <button id="qty-minus" type="button" aria-label="Decrease quantity">−</button>
-              <input id="qty-input" type="number" value="1" min="1" max="20" readonly aria-label="Quantity" />
+              <input id="qty-input" type="number" value="1" min="1" max="100" readonly aria-label="Quantity" />
               <button id="qty-plus" type="button" aria-label="Increase quantity">+</button>
             </div>
+            <span class="qty-subtotal" id="qty-subtotal"></span>
           </div>
 
           <button class="btn-primary" id="add-to-basket-btn" type="button">
@@ -110,6 +120,7 @@ async function initProductPage() {
 
   buildGallery(product, mediaEntry);
   updateNudge();
+  updateSubtotal();
 }
 
 function buildGallery(product, mediaEntry) {
@@ -195,17 +206,30 @@ function updateNudge() {
   }
 }
 
+// Clamp to 1–100, sync the bundle chips + live subtotal.
+function setQty(n) {
+  const q = Math.max(1, Math.min(100, parseInt(n, 10) || 1));
+  const input = document.getElementById("qty-input");
+  if (input) input.value = q;
+  document.querySelectorAll(".bundle-chip").forEach((c) =>
+    c.classList.toggle("active", parseInt(c.dataset.qty, 10) === q)
+  );
+  updateSubtotal();
+  updateNudge();
+}
+
+function updateSubtotal() {
+  const el = document.getElementById("qty-subtotal");
+  if (!el || !_currentProduct) return;
+  const q = getQty();
+  el.textContent = q > 1 ? `£${(Number(_currentProduct.price_gbp) * q).toFixed(2)} total` : "";
+}
+
 document.addEventListener("click", (e) => {
-  if (e.target.id === "qty-minus") {
-    const input = document.getElementById("qty-input");
-    input.value = Math.max(1, parseInt(input.value, 10) - 1);
-    updateNudge();
-  }
-  if (e.target.id === "qty-plus") {
-    const input = document.getElementById("qty-input");
-    input.value = Math.min(20, parseInt(input.value, 10) + 1);
-    updateNudge();
-  }
+  const chip = e.target.closest && e.target.closest(".bundle-chip");
+  if (chip) { setQty(chip.dataset.qty); return; }
+  if (e.target.id === "qty-minus") setQty(getQty() - 1);
+  if (e.target.id === "qty-plus") setQty(getQty() + 1);
 });
 
 function addToBasket() {

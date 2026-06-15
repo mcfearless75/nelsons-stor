@@ -14,11 +14,11 @@ function sbHeaders() {
 
 // Postage settings (single row) — same source the checkout function charges from,
 // so the cart can show a total that matches the till. Falls back to defaults.
-const DEFAULT_POSTAGE = { uk_standard_pence: 150, uk_free_threshold: 4, intl_pence: 350 };
+const DEFAULT_POSTAGE = { uk_standard_pence: 150, usa_pence: 500, intl_pence: 350 };
 async function fetchSettings() {
   try {
     const resp = await fetch(
-      `${SB_REST}/settings?select=uk_standard_pence,uk_free_threshold,intl_pence&limit=1`,
+      `${SB_REST}/settings?select=uk_standard_pence,usa_pence,intl_pence&limit=1`,
       { headers: sbHeaders() }
     );
     if (!resp.ok) throw new Error(String(resp.status));
