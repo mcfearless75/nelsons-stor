@@ -30,15 +30,15 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: "No items in basket" }) };
   }
 
-  if (items.length > 100) {
+  if (items.length > 20) {
     return { statusCode: 400, body: JSON.stringify({ error: "Too many items" }) };
   }
 
   try {
     const line_items = items.map(({ id, quantity }) => {
-      if (typeof id !== "string" || !id) throw new Error("Invalid item id");
+      if (typeof id !== "string" || !id || id.length > 64) throw new Error("Invalid item id");
       const product = priceLookup[id];
-      if (!product) throw new Error(`Unknown item: ${id}`);
+      if (!product) throw new Error("Unknown item");
       const qty = Math.max(1, Math.min(99, parseInt(quantity, 10) || 1));
       return {
         price_data: {

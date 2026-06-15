@@ -9,17 +9,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="css/styles.css?v=2" />
+  <link rel="stylesheet" href="css/styles.css?v=3" />
 </head>
 <body>
 
 <header class="site-header">
   <div class="header-inner">
-    <a href="index.html" class="site-logo"><span>🐾</span> Nelson's Stor</a>
+    <a href="index.html" class="site-logo"><span class="site-logo__icon" data-icon="paw"></span> Nelson's Stor</a>
     <nav class="header-nav">
       <a href="index.html">Shop</a>
       <a href="cart.html" class="cart-link">
-        🛒 Basket
+        <span data-icon="cart"></span> Basket
         <span class="cart-badge">0</span>
       </a>
     </nav>
@@ -55,17 +55,17 @@
       <div class="packaging-gallery">
         <div class="packaging-img">
           <img src="images/nelson/packaging.jpg" alt="Nelson's Stor beautifully packaged cards"
-            onerror="this.style.display='none';this.parentElement.querySelector('.packaging-placeholder').style.display='flex'" />
+            />
           <div class="packaging-placeholder" style="display:none"><span>📦</span><p>Packaging photo</p></div>
         </div>
         <div class="packaging-img">
           <img src="images/nelson/sticker.jpg" alt="Golden retriever sticker sealing the envelope"
-            onerror="this.style.display='none';this.parentElement.querySelector('.packaging-placeholder').style.display='flex'" />
+            />
           <div class="packaging-placeholder" style="display:none"><span>🏷️</span><p>The golden sticker</p></div>
         </div>
         <div class="packaging-img">
           <img src="images/nelson/flatlay.jpg" alt="Cards and envelope flat lay"
-            onerror="this.style.display='none';this.parentElement.querySelector('.packaging-placeholder').style.display='flex'" />
+            />
           <div class="packaging-placeholder" style="display:none"><span>✉️</span><p>Envelope flat-lay</p></div>
         </div>
       </div>
@@ -117,16 +117,16 @@
       <h2>Our promises to you</h2>
       <div style="display:flex;flex-direction:column;gap:1rem;margin-top:1rem">
         <div class="free-card-promise">
-          🎁 <span><strong>Surprise free card in every order.</strong> It started as a one-off, then became a thing, and now it's non-negotiable. Nelson insists.</span>
+          <span data-icon="gift"></span> <span><strong>Surprise free card in every order.</strong> It started as a one-off, then became a thing, and now it's non-negotiable. Nelson insists.</span>
         </div>
         <div class="free-card-promise">
-          🚀 <strong>Dispatched within 2–3 working days.</strong> Each card printed fresh. Not warehoused, not mass-produced — made to order.
+          <span data-icon="truck"></span> <strong>Dispatched within 2–3 working days.</strong> Each card printed fresh. Not warehoused, not mass-produced — made to order.
         </div>
         <div class="free-card-promise">
-          📦 <strong>Beautiful packaging, every time.</strong> Because the unboxing is part of the gift.
+          <span data-icon="package"></span> <strong>Beautiful packaging, every time.</strong> Because the unboxing is part of the gift.
         </div>
         <div class="free-card-promise">
-          🇬🇧 <strong>Free UK postage on 4+ cards.</strong> Stock up, save on postage. Makes sense.
+          <span data-icon="check"></span> <strong>Free UK postage on 4+ cards.</strong> Stock up, save on postage. Makes sense.
         </div>
       </div>
     </div>
@@ -152,7 +152,7 @@
   <div class="container">
     <h2>New ranges, straight to your inbox</h2>
     <p>Christmas, Valentine's, seasonal specials — be the first to know.</p>
-    <form class="email-form" onsubmit="handleEmailSignup(event)">
+    <form class="email-form">
       <input type="email" placeholder="your@email.com" required aria-label="Email address" />
       <button type="submit">Keep me posted</button>
     </form>
@@ -171,11 +171,8 @@
 </footer>
 
 <script src="js/cart.js"></script>
-<script>
-function handleEmailSignup(e) {
-  e.preventDefault();
-  e.target.innerHTML = '<p style="color:var(--gold-light);font-weight:600">Thanks! Nelson will be in touch. 🐾</p>';
-}
-</script>
+<script src="js/icons.js"></script>
+<script src="js/page-signup.js"></script>
+<script src="js/page-about.js"></script>
 </body>
 </html>

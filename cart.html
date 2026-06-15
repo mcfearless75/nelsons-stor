@@ -8,17 +8,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="css/styles.css?v=2" />
+  <link rel="stylesheet" href="css/styles.css?v=3" />
 </head>
 <body>
 
 <header class="site-header">
   <div class="header-inner">
-    <a href="index.html" class="site-logo"><span>🐾</span> Nelson's Stor</a>
+    <a href="index.html" class="site-logo"><span class="site-logo__icon" data-icon="paw"></span> Nelson's Stor</a>
     <nav class="header-nav">
       <a href="about.html">About Nelson</a>
       <a href="cart.html" class="cart-link">
-        🛒 Basket
+        <span data-icon="cart"></span> Basket
         <span class="cart-badge">0</span>
       </a>
     </nav>
@@ -46,100 +46,8 @@
 </footer>
 
 <script src="js/cart.js"></script>
+<script src="js/icons.js"></script>
 <script src="js/checkout.js"></script>
-<script>
-function placeholderSvg(title) {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><rect width="80" height="80" fill="#F5E8D2" rx="6"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#C8973A" font-size="28">🐾</text></svg>`;
-  return 'data:image/svg+xml,' + encodeURIComponent(svg);
-}
-
-function renderCart() {
-  const cart = getCart();
-  const wrap = document.getElementById('cart-wrap');
-  const count = cartCount();
-  const total = cartTotal();
-  const postage = count >= 4 ? 0 : 1.5;
-  const grandTotal = total + postage;
-  const toFree = 4 - count;
-
-  if (cart.length === 0) {
-    wrap.innerHTML = `
-      <div class="cart-empty">
-        <p>🐾 Your basket is empty — Nelson is waiting to help!</p>
-        <a href="index.html" class="btn-primary" style="display:inline-flex;width:auto;padding:0.85em 2em">Browse all cards</a>
-      </div>
-    `;
-    return;
-  }
-
-  const itemsHtml = cart.map(item => `
-    <div class="cart-item" data-id="${item.id}">
-      <img
-        class="cart-item__img"
-        src="${item.image}"
-        alt="${item.title}"
-        onerror="this.src='${placeholderSvg(item.title)}'"
-      />
-      <div class="cart-item__info">
-        <div class="cart-item__title">${item.title}</div>
-        <div class="cart-item__unit">£${item.price_gbp.toFixed(2)} each · ${item.size || ''}</div>
-        <div class="cart-item__controls">
-          <div class="qty-ctrl">
-            <button onclick="changeQty('${item.id}', ${item.qty - 1})" aria-label="Decrease">−</button>
-            <input type="number" value="${item.qty}" min="1" max="20" readonly aria-label="Quantity" />
-            <button onclick="changeQty('${item.id}', ${item.qty + 1})" aria-label="Increase">+</button>
-          </div>
-          <button class="cart-item__remove" onclick="removeFromCart('${item.id}')">Remove</button>
-        </div>
-      </div>
-      <div class="cart-item__subtotal">£${(item.price_gbp * item.qty).toFixed(2)}</div>
-    </div>
-  `).join('');
-
-  const thresholdMsg = toFree > 0 && toFree <= 3
-    ? `<div class="postage-threshold-msg">🎉 Add ${toFree} more card${toFree > 1 ? 's' : ''} for <strong>free UK postage</strong>!</div>`
-    : '';
-
-  const postageRow = postage === 0
-    ? `<div class="summary-row postage-free"><span>UK Postage</span><span>FREE 🎉</span></div>`
-    : `<div class="summary-row"><span>UK Postage</span><span>£${postage.toFixed(2)}</span></div>`;
-
-  wrap.innerHTML = `
-    <div class="cart-layout">
-      <div class="cart-items">${itemsHtml}</div>
-      <aside class="cart-summary">
-        <h2>Order summary</h2>
-        <div class="summary-row"><span>Cards (${count})</span><span>£${total.toFixed(2)}</span></div>
-        ${postageRow}
-        <hr class="summary-divider" />
-        <div class="summary-total"><span>Total</span><span>£${grandTotal.toFixed(2)}</span></div>
-        ${thresholdMsg}
-        <button class="btn-primary" id="checkout-btn" onclick="goToCheckout()">
-          🔒 Checkout securely
-        </button>
-        <a href="index.html" class="btn-secondary mt-2" style="display:flex;margin-top:0.75rem">
-          ← Keep shopping
-        </a>
-        <p class="stripe-badge">🔒 Secure checkout by Stripe</p>
-        <div class="free-card-promise mt-2" style="font-size:0.8rem;margin-top:0.75rem">
-          🎁 <span>Every order includes a <strong>surprise free card</strong> from Nelson.</span>
-        </div>
-      </aside>
-    </div>
-  `;
-}
-
-function changeQty(id, newQty) {
-  updateQty(id, newQty);
-  renderCart();
-}
-
-function removeFromCart(id) {
-  removeItem(id);
-  renderCart();
-}
-
-document.addEventListener('DOMContentLoaded', renderCart);
-</script>
+<script src="js/page-cart.js"></script>
 </body>
 </html>

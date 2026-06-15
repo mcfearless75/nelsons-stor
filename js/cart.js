@@ -1,5 +1,15 @@
 const CART_KEY = "nelsons_cart";
 
+// Escape strings before injecting into innerHTML (defence-in-depth for catalogue data).
+function esc(str) {
+  return String(str == null ? "" : str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function getCart() {
   try {
     return JSON.parse(localStorage.getItem(CART_KEY)) || [];

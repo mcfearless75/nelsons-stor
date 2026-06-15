@@ -9,17 +9,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="css/styles.css?v=2" />
+  <link rel="stylesheet" href="css/styles.css?v=3" />
 </head>
 <body>
 
 <header class="site-header">
   <div class="header-inner">
-    <a href="index.html" class="site-logo"><span>🐾</span> Nelson's Stor</a>
+    <a href="index.html" class="site-logo"><span class="site-logo__icon" data-icon="paw"></span> Nelson's Stor</a>
     <nav class="header-nav">
       <a href="about.html">About Nelson</a>
       <a href="cart.html" class="cart-link">
-        🛒 Basket
+        <span data-icon="cart"></span> Basket
         <span class="cart-badge">0</span>
       </a>
     </nav>
@@ -54,212 +54,7 @@
 </footer>
 
 <script src="js/cart.js"></script>
-<script>
-let _currentProduct = null;
-
-const CATEGORY_LABELS = {
-  christmas: 'Christmas', birthday: 'Birthday', valentine: "Valentine's",
-  'fathers-day': "Father's Day", 'mothers-day': "Mother's Day", baby: 'New Baby',
-  sympathy: 'Sympathy & Pet Loss', 'get-well': 'Get Well Soon',
-  'thinking-of-you': 'Thinking of You', 'st-patricks': "St Patrick's", general: 'General'
-};
-
-function placeholderSvg(title) {
-  const safe = title.replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
-  const lines = safe.match(/.{1,22}/g) || [safe];
-  const textRows = lines.slice(0,3).map((l,i) =>
-    `<text x="50%" y="${50 + i * 18}" dominant-baseline="middle" text-anchor="middle" fill="#8B5E3C" font-size="13" font-family="Georgia,serif">${l}</text>`
-  ).join('');
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500"><rect width="400" height="500" fill="#FFF8EE" rx="8"/><rect x="20" y="20" width="360" height="460" fill="none" stroke="#E8B84B" stroke-width="2" stroke-dasharray="6 4" rx="6"/><text x="50%" y="36%" dominant-baseline="middle" text-anchor="middle" fill="#C8973A" font-size="48">🐾</text>${textRows}</svg>`;
-  return 'data:image/svg+xml,' + encodeURIComponent(svg);
-}
-
-async function initProductPage() {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  if (!id) { window.location = 'index.html'; return; }
-
-  const resp = await fetch('data/products.json');
-  const catalogue = await resp.json();
-  const product = catalogue.find(p => p.id === id && p.active);
-
-  if (!product) { window.location = 'index.html'; return; }
-  _currentProduct = product;
-
-  let mediaEntry = null;
-  try {
-    const mResp = await fetch('data/media.json');
-    if (mResp.ok) { const allMedia = await mResp.json(); mediaEntry = allMedia[id] || null; }
-  } catch (e) { /* gallery falls back to the single catalogue image */ }
-
-  document.title = `${product.title} — Nelson's Stor`;
-  document.querySelector('meta[name="description"]').content = product.description;
-
-  const catLabel = CATEGORY_LABELS[product.category] || product.category;
-  document.getElementById('bc-cat').textContent = catLabel;
-  document.getElementById('bc-title').textContent = product.title;
-
-  const wrap = document.getElementById('product-detail-wrap');
-  wrap.innerHTML = `
-    <div class="product-page">
-      <div class="product-page-inner">
-        <div class="product-gallery">
-          <div class="gallery-main" id="gallery-main">
-            <img id="gallery-main-img" src="${product.image}" alt="${product.title}" fetchpriority="high" />
-          </div>
-          <div class="gallery-thumbs" id="gallery-thumbs"></div>
-        </div>
-        <div class="product-detail">
-          <p class="product-detail__cat">${catLabel}${product.is_bundle ? ' · Bundle' : ''}</p>
-          <h1 class="product-detail__title">${product.title}</h1>
-          <p class="product-detail__price">£${product.price_gbp.toFixed(2)}</p>
-          <p class="product-detail__desc">${product.description}</p>
-          <div class="product-specs">
-            <span class="spec-chip">Size: ${product.size}</span>
-            <span class="spec-chip">${product.gsm}gsm card</span>
-            <span class="spec-chip">Envelope included</span>
-            <span class="spec-chip">Blank inside</span>
-          </div>
-
-          <div id="postage-nudge" class="postage-nudge">
-            🎉 Add just <strong id="nudge-count">1</strong> more card to get <strong>free UK postage</strong>!
-          </div>
-
-          <div class="qty-row">
-            <span class="qty-label">Quantity</span>
-            <div class="qty-ctrl">
-              <button id="qty-minus" aria-label="Decrease quantity">−</button>
-              <input id="qty-input" type="number" value="1" min="1" max="20" readonly aria-label="Quantity" />
-              <button id="qty-plus" aria-label="Increase quantity">+</button>
-            </div>
-          </div>
-
-          <button class="btn-primary" id="add-to-basket-btn" onclick="addToBasket()">
-            🛒 Add to Basket
-          </button>
-
-          <div id="add-confirm" class="add-confirm">
-            ✅ Added to basket! <a href="cart.html">View basket →</a>
-          </div>
-
-          <div class="free-card-promise">
-            🎁 <span><strong>Every order includes a surprise free card from Nelson.</strong> It's his way of saying thanks.</span>
-          </div>
-
-          <div class="free-card-promise" style="margin-top:0.5rem">
-            🚀 <span>Each card printed fresh and dispatched within <strong>2–3 working days</strong>.</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  buildGallery(product, mediaEntry);
-
-  updateNudge();
-}
-
-function buildGallery(product, mediaEntry) {
-  const images = (mediaEntry && mediaEntry.images && mediaEntry.images.length)
-    ? mediaEntry.images : [product.image];
-  const video = mediaEntry && mediaEntry.video ? mediaEntry.video : null;
-  const poster = images[0];
-
-  setMainImage(images[0], product.title);
-
-  const thumbs = document.getElementById('gallery-thumbs');
-  if (images.length <= 1 && !video) { thumbs.style.display = 'none'; return; }
-
-  let html = '';
-  images.forEach((src, i) => {
-    html += `<button class="gallery-thumb${i === 0 ? ' active' : ''}" data-type="image" data-src="${src}" aria-label="View image ${i + 1}">
-      <img src="${src}" alt="${product.title} view ${i + 1}" loading="lazy" onerror="this.style.opacity=0" />
-    </button>`;
-  });
-  if (video) {
-    html += `<button class="gallery-thumb gallery-thumb--video" data-type="video" data-src="${video}" data-poster="${poster}" aria-label="Play product video">
-      <img src="${poster}" alt="Play video" loading="lazy" />
-      <span class="gallery-play">▶</span>
-    </button>`;
-  }
-  thumbs.innerHTML = html;
-
-  thumbs.querySelectorAll('.gallery-thumb').forEach(btn => {
-    btn.addEventListener('click', () => {
-      thumbs.querySelectorAll('.gallery-thumb').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      if (btn.dataset.type === 'video') {
-        setMainVideo(btn.dataset.src, btn.dataset.poster);
-      } else {
-        setMainImage(btn.dataset.src, product.title);
-      }
-    });
-  });
-}
-
-function setMainImage(src, title) {
-  const main = document.getElementById('gallery-main');
-  main.innerHTML = `<img id="gallery-main-img" src="${src}" alt="${title}" />`;
-  const img = document.getElementById('gallery-main-img');
-  img.onerror = () => { img.src = placeholderSvg(title); };
-}
-
-function setMainVideo(src, poster) {
-  const main = document.getElementById('gallery-main');
-  main.innerHTML = `<video id="gallery-main-video" src="${src}" poster="${poster}" controls autoplay muted playsinline loop></video>`;
-}
-
-function getQty() {
-  return parseInt(document.getElementById('qty-input').value, 10) || 1;
-}
-
-function updateNudge() {
-  const currentCartCount = cartCount();
-  const qty = getQty();
-  const total = currentCartCount + qty;
-  const nudge = document.getElementById('postage-nudge');
-  if (!nudge) return;
-  if (currentCartCount >= 4 || total >= 4) {
-    nudge.classList.remove('visible');
-    return;
-  }
-  const need = 4 - total;
-  if (need <= 2) {
-    document.getElementById('nudge-count').textContent = need;
-    nudge.classList.add('visible');
-  } else {
-    nudge.classList.remove('visible');
-  }
-}
-
-document.addEventListener('click', (e) => {
-  if (e.target.id === 'qty-minus') {
-    const input = document.getElementById('qty-input');
-    const v = Math.max(1, parseInt(input.value, 10) - 1);
-    input.value = v;
-    updateNudge();
-  }
-  if (e.target.id === 'qty-plus') {
-    const input = document.getElementById('qty-input');
-    const v = Math.min(20, parseInt(input.value, 10) + 1);
-    input.value = v;
-    updateNudge();
-  }
-});
-
-function addToBasket() {
-  if (!_currentProduct) return;
-
-  const qty = getQty();
-  addItem(_currentProduct, qty);
-
-  const confirm = document.getElementById('add-confirm');
-  confirm.classList.add('visible');
-  setTimeout(() => confirm.classList.remove('visible'), 4000);
-  updateNudge();
-}
-
-document.addEventListener('DOMContentLoaded', initProductPage);
-</script>
+<script src="js/icons.js"></script>
+<script src="js/page-product.js"></script>
 </body>
 </html>

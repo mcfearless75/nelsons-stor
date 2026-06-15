@@ -49,28 +49,36 @@ function renderProductGrid(products) {
   grid.innerHTML = products
     .map(
       (p) => `
-    <a class="product-card" href="product.html?id=${p.id}">
+    <a class="product-card" href="product.html?id=${encodeURIComponent(p.id)}">
       <div class="product-card__img-wrap">
         <img
-          src="${p.image}"
-          alt="${p.title}"
+          src="${esc(p.image)}"
+          alt="${esc(p.title)}"
           loading="lazy"
-          onerror="handleImgError(this,'${p.title.replace(/'/g, "\\'")}')"
+          data-fallback-title="${esc(p.title)}"
         />
         ${p.is_bundle ? '<span class="badge badge--bundle">Bundle</span>' : ""}
         ${p.size === "A6" ? '<span class="badge badge--size">A6</span>' : ""}
       </div>
       <div class="product-card__body">
-        <h3 class="product-card__title">${p.title}</h3>
+        <h3 class="product-card__title">${esc(p.title)}</h3>
         <div class="product-card__meta">
-          <span class="product-card__size">${p.size}</span>
-          <span class="product-card__price">£${p.price_gbp.toFixed(2)}</span>
+          <span class="product-card__size">${esc(p.size)}</span>
+          <span class="product-card__price">£${Number(p.price_gbp).toFixed(2)}</span>
         </div>
       </div>
     </a>
   `
     )
     .join("");
+
+  // Attach image-error fallbacks without inline handlers (CSP-friendly)
+  grid.querySelectorAll(".product-card__img-wrap img").forEach((img) => {
+    img.addEventListener("error", function handler() {
+      img.removeEventListener("error", handler);
+      img.src = placeholderSvg(img.dataset.fallbackTitle || "");
+    });
+  });
 }
 
 function buildCategoryNav(activeSlug) {

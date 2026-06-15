@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="css/styles.css?v=2" />
+  <link rel="stylesheet" href="css/styles.css?v=3" />
 </head>
 <body>
 
@@ -21,12 +21,12 @@
 <header class="site-header">
   <div class="header-inner">
     <a href="index.html" class="site-logo">
-      <span>🐾</span> Nelson's Stor
+      <span class="site-logo__icon" data-icon="paw"></span> Nelson's Stor
     </a>
     <nav class="header-nav">
       <a href="about.html">About Nelson</a>
       <a href="cart.html" class="cart-link">
-        🛒 Basket
+        <span data-icon="cart"></span> Basket
         <span class="cart-badge">0</span>
       </a>
     </nav>
@@ -63,10 +63,10 @@
   <!-- TRUST STRIP -->
   <div class="trust-strip">
     <div class="trust-strip-inner">
-      <div class="trust-item">⭐ 5.0 from 130+ reviews</div>
-      <div class="trust-item">🎁 Free UK postage on 4+ cards</div>
-      <div class="trust-item">🚀 Dispatched in 2–3 working days</div>
-      <div class="trust-item">✉️ Surprise free card in every order</div>
+      <div class="trust-item"><span data-icon="star"></span> 5.0 from 130+ reviews</div>
+      <div class="trust-item"><span data-icon="truck"></span> Free UK postage on 4+ cards</div>
+      <div class="trust-item"><span data-icon="clock"></span> Dispatched in 2–3 working days</div>
+      <div class="trust-item"><span data-icon="gift"></span> Surprise free card in every order</div>
     </div>
   </div>
 
@@ -86,7 +86,7 @@
   <div class="container">
     <h2>Be the first to know about new designs</h2>
     <p>Nelson's new ranges — Christmas, Valentine's, seasonal specials — straight to your inbox.</p>
-    <form class="email-form" onsubmit="handleEmailSignup(event)">
+    <form class="email-form">
       <input type="email" placeholder="your@email.com" required aria-label="Email address" />
       <button type="submit">Keep me posted</button>
     </form>
@@ -106,13 +106,8 @@
 </footer>
 
 <script src="js/cart.js"></script>
+<script src="js/icons.js"></script>
 <script src="js/products.js"></script>
-<script>
-function handleEmailSignup(e) {
-  e.preventDefault();
-  const input = e.target.querySelector('input');
-  e.target.innerHTML = '<p style="color:var(--gold-light);font-weight:600">Thanks! Nelson will be in touch. 🐾</p>';
-}
-</script>
+<script src="js/page-signup.js"></script>
 </body>
 </html>

@@ -25,7 +25,15 @@ async function goToCheckout() {
       }
       return;
     }
-    window.location = url;
+    if (typeof url === "string" && url.startsWith("https://checkout.stripe.com/")) {
+      window.location = url;
+    } else {
+      alert("Unexpected checkout response. Please try again.");
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Checkout securely";
+      }
+    }
   } catch {
     alert("Something went wrong. Please try again.");
     if (btn) {

@@ -968,3 +968,49 @@ h3 { font-size: clamp(1rem, 2vw, 1.25rem); }
   .reviews-grid { grid-template-columns: 1fr; }
   .packaging-gallery { grid-template-columns: 1fr; }
 }
+
+/* === ACCESSIBILITY & INTERACTION POLISH === */
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+a, button, input { -webkit-tap-highlight-color: transparent; }
+
+.product-card, .gallery-thumb, .cat-btn, .cart-link,
+.hero-cta, .btn-primary, .btn-secondary, .qty-ctrl button { cursor: pointer; }
+
+/* Touch targets — minimum 44px for primary controls */
+.header-nav a { padding: 0.5rem 0.3rem; display: inline-flex; align-items: center; }
+.cat-btn { min-height: 44px; display: inline-flex; align-items: center; }
+.qty-ctrl button { width: 44px; height: 44px; }
+.footer-links a { padding: 0.3rem 0; display: inline-block; }
+
+/* Sticky-header anchor offset so #shop isn't hidden under the nav */
+#shop { scroll-margin-top: calc(var(--header-h) + 1rem); }
+
+/* Inline SVG icon system */
+.icon {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+  vertical-align: -0.18em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.icon--fill { fill: currentColor; stroke: none; }
+.site-logo .icon { width: 1.4rem; height: 1.4rem; color: var(--gold); }
+.trust-item .icon { color: var(--gold-light); width: 1.05rem; height: 1.05rem; }
+.cart-link .icon { width: 1.15rem; height: 1.15rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
