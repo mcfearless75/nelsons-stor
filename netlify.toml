@@ -20,24 +20,25 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
 
-# Long-lived cache for versioned assets
+# CSS/JS are not fingerprinted — always revalidate so updates show immediately
 [[headers]]
   for = "/css/*.css"
   [headers.values]
-    Cache-Control = "public, max-age=86400"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/js/*.js"
   [headers.values]
-    Cache-Control = "public, max-age=86400"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
+# Images/video are stable per filename — cache long
 [[headers]]
   for = "/images/*"
   [headers.values]
     Cache-Control = "public, max-age=2592000"
 
-# Catalogue can be cached briefly — edit + redeploy to bust
+# Catalogue + media manifest — revalidate so edits show on redeploy
 [[headers]]
-  for = "/data/products.json"
+  for = "/data/*"
   [headers.values]
-    Cache-Control = "public, max-age=3600"
+    Cache-Control = "public, max-age=0, must-revalidate"
