@@ -1006,6 +1006,20 @@ a, button, input { -webkit-tap-highlight-color: transparent; }
 .trust-item .icon { color: var(--gold-light); width: 1.05rem; height: 1.05rem; }
 .cart-link .icon { width: 1.15rem; height: 1.15rem; }
 
+/* === BRAND LOGO === */
+.site-logo__img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold-light);
+  box-shadow: var(--shadow-sm);
+  background: var(--cream-mid);
+}
+@media (max-width: 480px) {
+  .site-logo__img { width: 36px; height: 36px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
