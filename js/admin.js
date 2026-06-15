@@ -271,12 +271,12 @@ async function handleResetSubmit(event) {
   setResetError("");
   const pw = document.getElementById("reset-password").value;
   const confirm = document.getElementById("reset-confirm").value;
-  if (pw.length < 8) {
-    setResetError("Password must be at least 8 characters.");
+  if (pw.length < 6) {
+    setResetError("Your access code must be at least 6 digits.");
     return;
   }
   if (pw !== confirm) {
-    setResetError("Those passwords don't match.");
+    setResetError("Those codes don't match.");
     return;
   }
   const btn = document.getElementById("reset-submit");
@@ -288,7 +288,7 @@ async function handleResetSubmit(event) {
     clearUrlHash();
     document.getElementById("reset-form").reset();
     showView("login");
-    setLoginNote("Password updated. You can sign in with it now.");
+    setLoginNote("Access code updated. You can sign in with it now.");
   } catch (e) {
     setResetError(
       e.message === "UNAUTHORISED" || /expired|invalid/i.test(e.message)

@@ -11,7 +11,7 @@
   <link rel="icon" href="images/logo.jpg" />
   <link rel="apple-touch-icon" href="images/logo.jpg" />
   <link rel="stylesheet" href="css/styles.css?v=6" />
-  <link rel="stylesheet" href="css/admin.css?v=6" />
+  <link rel="stylesheet" href="css/admin.css?v=7" />
 </head>
 <body>
 
@@ -38,32 +38,32 @@
           <input id="login-email" type="email" autocomplete="username" required />
         </div>
         <div class="field">
-          <label for="login-password">Password</label>
-          <input id="login-password" type="password" autocomplete="current-password" required />
+          <label for="login-password">Access code</label>
+          <input id="login-password" type="password" inputmode="numeric" autocomplete="current-password" required />
         </div>
         <button id="login-submit" class="btn-primary" type="submit">Sign in</button>
         <p id="login-error" class="form-error" role="alert" hidden></p>
         <p id="login-note" class="login-note" role="status" hidden></p>
-        <button id="forgot-btn" class="link-btn" type="button">Forgot password?</button>
+        <button id="forgot-btn" class="link-btn" type="button">Forgot your code?</button>
       </form>
     </div>
   </section>
 
-  <!-- SET NEW PASSWORD (password recovery link) -->
+  <!-- SET NEW ACCESS CODE (recovery link) -->
   <section id="reset-view" hidden>
     <div class="login-card">
-      <h2>Set a new password</h2>
-      <p class="login-card__hint">Choose a new password for your admin account.</p>
+      <h2>Set a new access code</h2>
+      <p class="login-card__hint">Choose a new code (6 digits) for your admin account.</p>
       <form id="reset-form" novalidate>
         <div class="field">
-          <label for="reset-password">New password</label>
-          <input id="reset-password" type="password" autocomplete="new-password" minlength="8" required />
+          <label for="reset-password">New access code</label>
+          <input id="reset-password" type="password" inputmode="numeric" autocomplete="new-password" minlength="6" required />
         </div>
         <div class="field">
-          <label for="reset-confirm">Confirm new password</label>
-          <input id="reset-confirm" type="password" autocomplete="new-password" minlength="8" required />
+          <label for="reset-confirm">Confirm access code</label>
+          <input id="reset-confirm" type="password" inputmode="numeric" autocomplete="new-password" minlength="6" required />
         </div>
-        <button id="reset-submit" class="btn-primary" type="submit">Update password</button>
+        <button id="reset-submit" class="btn-primary" type="submit">Update code</button>
         <p id="reset-error" class="form-error" role="alert" hidden></p>
       </form>
     </div>
@@ -218,8 +218,8 @@
 <script src="js/admin-auth.js?v=2"></script>
 <script src="js/admin-data.js?v=3"></script>
 <script src="js/admin-storage.js?v=1"></script>
-<script src="js/admin.js?v=6"></script>
-<script src="js/admin-editor.js?v=3"></script>
+<script src="js/admin.js?v=7"></script>
+<script src="js/admin-editor.js?v=4"></script>
 <script src="js/admin-media.js?v=1"></script>
 </body>
 </html>
