@@ -308,14 +308,15 @@ h3 { font-size: clamp(1rem, 2vw, 1.25rem); }
 }
 .product-card__img-wrap {
   position: relative;
-  aspect-ratio: 4/5;
-  background: var(--cream);
+  aspect-ratio: 4/3;
+  background: #fff;
   overflow: hidden;
+  padding: 6px;
 }
 .product-card__img-wrap img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.35s ease;
 }
 .product-card:hover .product-card__img-wrap img {
@@ -402,13 +403,14 @@ h3 { font-size: clamp(1rem, 2vw, 1.25rem); }
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-md);
-  aspect-ratio: 4/5;
-  background: var(--cream-mid);
+  aspect-ratio: 4/3;
+  background: #fff;
+  padding: 12px;
 }
 .product-img-main img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 .product-detail { display: flex; flex-direction: column; gap: 1.2rem; }
 .product-detail__cat {
