@@ -79,6 +79,21 @@
   transition: background var(--transition), border-color var(--transition);
 }
 .btn-ghost:hover { background: var(--cream-mid); border-color: var(--gold-light); }
+.link-btn {
+  display: block;
+  margin: 0.85rem auto 0;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--brown-light);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.link-btn:hover { color: var(--brown); }
+.login-note { margin-top: 0.9rem; font-size: 0.85rem; color: var(--text-light); }
+
 .btn-ghost--danger { color: #b3261e; }
 .btn-ghost--danger:hover { background: #fdecea; border-color: #f0b4ae; }
 

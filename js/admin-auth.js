@@ -100,6 +100,56 @@ async function signOut() {
   clearSession();
 }
 
+// === PASSWORD RECOVERY ===
+
+// Send a reset email. The link returns the user to admin.html with a recovery
+// token in the URL fragment. GoTrue returns 200 even for unknown emails (no
+// account enumeration), so success here just means "the email was accepted".
+async function requestPasswordReset(email) {
+  const redirectTo = `${window.location.origin}/admin.html`;
+  const resp = await fetch(
+    `${SB_AUTH}/recover?redirect_to=${encodeURIComponent(redirectTo)}`,
+    {
+      method: "POST",
+      headers: { apikey: SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    }
+  );
+  if (!resp.ok) {
+    const data = await resp.json().catch(() => ({}));
+    throw new Error(authError(data, "Couldn't send the reset email."));
+  }
+}
+
+// Pull a recovery access token out of the URL fragment, if the reset link
+// brought one (…#access_token=…&type=recovery). Returns the token or null.
+function readRecoveryToken() {
+  const hash = window.location.hash || "";
+  if (hash.indexOf("type=recovery") === -1) return null;
+  return new URLSearchParams(hash.replace(/^#/, "")).get("access_token");
+}
+
+// Strip the auth fragment so the token isn't left sitting in the address bar.
+function clearUrlHash() {
+  history.replaceState(null, "", window.location.pathname + window.location.search);
+}
+
+// Set a new password using a recovery access token.
+async function updatePassword(accessToken, newPassword) {
+  const resp = await fetch(`${SB_AUTH}/user`, {
+    method: "PUT",
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ password: newPassword }),
+  });
+  const data = await resp.json().catch(() => ({}));
+  if (!resp.ok) throw new Error(authError(data, "Couldn't update the password."));
+  return data;
+}
+
 // PostgREST headers carrying the user JWT — the authenticated role can read
 // inactive products that the anon key (public shop) cannot.
 function authHeaders(session) {

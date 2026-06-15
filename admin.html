@@ -11,7 +11,7 @@
   <link rel="icon" href="images/logo.jpg" />
   <link rel="apple-touch-icon" href="images/logo.jpg" />
   <link rel="stylesheet" href="css/styles.css?v=6" />
-  <link rel="stylesheet" href="css/admin.css?v=5" />
+  <link rel="stylesheet" href="css/admin.css?v=6" />
 </head>
 <body>
 
@@ -43,6 +43,28 @@
         </div>
         <button id="login-submit" class="btn-primary" type="submit">Sign in</button>
         <p id="login-error" class="form-error" role="alert" hidden></p>
+        <p id="login-note" class="login-note" role="status" hidden></p>
+        <button id="forgot-btn" class="link-btn" type="button">Forgot password?</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- SET NEW PASSWORD (password recovery link) -->
+  <section id="reset-view" hidden>
+    <div class="login-card">
+      <h2>Set a new password</h2>
+      <p class="login-card__hint">Choose a new password for your admin account.</p>
+      <form id="reset-form" novalidate>
+        <div class="field">
+          <label for="reset-password">New password</label>
+          <input id="reset-password" type="password" autocomplete="new-password" minlength="8" required />
+        </div>
+        <div class="field">
+          <label for="reset-confirm">Confirm new password</label>
+          <input id="reset-confirm" type="password" autocomplete="new-password" minlength="8" required />
+        </div>
+        <button id="reset-submit" class="btn-primary" type="submit">Update password</button>
+        <p id="reset-error" class="form-error" role="alert" hidden></p>
       </form>
     </div>
   </section>
@@ -193,10 +215,10 @@
   </div>
 </div>
 
-<script src="js/admin-auth.js?v=1"></script>
+<script src="js/admin-auth.js?v=2"></script>
 <script src="js/admin-data.js?v=3"></script>
 <script src="js/admin-storage.js?v=1"></script>
-<script src="js/admin.js?v=4"></script>
+<script src="js/admin.js?v=5"></script>
 <script src="js/admin-editor.js?v=3"></script>
 <script src="js/admin-media.js?v=1"></script>
 </body>

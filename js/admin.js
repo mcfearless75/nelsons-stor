@@ -219,6 +219,7 @@ function buildCategoryOptions() {
 
 function showView(view) {
   document.getElementById("login-view").hidden = view !== "login";
+  document.getElementById("reset-view").hidden = view !== "reset";
   document.getElementById("dashboard-view").hidden = view !== "dashboard";
   document.getElementById("logout-btn").hidden = view !== "dashboard";
 }
@@ -227,6 +228,77 @@ function setLoginError(message) {
   const el = document.getElementById("login-error");
   el.textContent = message || "";
   el.hidden = !message;
+}
+
+function setLoginNote(message) {
+  const el = document.getElementById("login-note");
+  el.textContent = message || "";
+  el.hidden = !message;
+}
+
+function setResetError(message) {
+  const el = document.getElementById("reset-error");
+  el.textContent = message || "";
+  el.hidden = !message;
+}
+
+// === PASSWORD RECOVERY ===
+
+let RECOVERY_TOKEN = null;
+
+async function handleForgotPassword() {
+  setLoginError("");
+  setLoginNote("");
+  const email = document.getElementById("login-email").value.trim();
+  if (!email) {
+    setLoginError("Enter your email above first, then click Forgot password.");
+    return;
+  }
+  const btn = document.getElementById("forgot-btn");
+  btn.disabled = true;
+  try {
+    await requestPasswordReset(email);
+    setLoginNote("If that email has an account, a reset link is on its way. Check your inbox.");
+  } catch (e) {
+    setLoginError(e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function handleResetSubmit(event) {
+  event.preventDefault();
+  setResetError("");
+  const pw = document.getElementById("reset-password").value;
+  const confirm = document.getElementById("reset-confirm").value;
+  if (pw.length < 8) {
+    setResetError("Password must be at least 8 characters.");
+    return;
+  }
+  if (pw !== confirm) {
+    setResetError("Those passwords don't match.");
+    return;
+  }
+  const btn = document.getElementById("reset-submit");
+  btn.disabled = true;
+  btn.textContent = "Updating…";
+  try {
+    await updatePassword(RECOVERY_TOKEN, pw);
+    RECOVERY_TOKEN = null;
+    clearUrlHash();
+    document.getElementById("reset-form").reset();
+    showView("login");
+    setLoginNote("Password updated. You can sign in with it now.");
+  } catch (e) {
+    setResetError(
+      e.message === "UNAUTHORISED" || /expired|invalid/i.test(e.message)
+        ? "This reset link has expired. Request a new one from the sign-in page."
+        : e.message
+    );
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Update password";
+  }
 }
 
 async function loadDashboard() {
@@ -285,6 +357,8 @@ async function initAdmin() {
   initEditors();
   initMediaManager();
   document.getElementById("login-form").addEventListener("submit", handleLogin);
+  document.getElementById("forgot-btn").addEventListener("click", handleForgotPassword);
+  document.getElementById("reset-form").addEventListener("submit", handleResetSubmit);
   document.getElementById("logout-btn").addEventListener("click", handleSignOut);
   document.getElementById("admin-search").addEventListener("input", renderList);
   document.getElementById("admin-cat").addEventListener("change", renderList);
@@ -293,6 +367,15 @@ async function initAdmin() {
   document
     .getElementById("postage-btn")
     .addEventListener("click", () => openPostageEditor(SESSION));
+
+  // A recovery link (…#type=recovery) takes priority over any stored session:
+  // show the set-new-password form instead of signing in.
+  RECOVERY_TOKEN = readRecoveryToken();
+  if (RECOVERY_TOKEN) {
+    showView("reset");
+    document.getElementById("reset-password").focus();
+    return;
+  }
 
   SESSION = await getValidSession();
   if (SESSION) {
