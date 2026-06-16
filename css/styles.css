@@ -207,8 +207,9 @@ h3 { font-size: clamp(1rem, 2vw, 1.25rem); }
   transform: translateY(-2px);
 }
 @media (max-width: 600px) {
-  .hero-banner-wrap { height: 68vh; min-height: 420px; max-height: 560px; }
-  .hero-banner-img { object-position: 50% 22%; }
+  .hero-banner-wrap { height: 64vh; min-height: 400px; max-height: 540px; }
+  /* Wide banner — the dog's face sits on the right, so bias the crop there */
+  .hero-banner-img { object-position: 86% 50%; }
   .hero-banner-overlay {
     background: linear-gradient(
       to top,
